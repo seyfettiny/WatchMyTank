@@ -14,5 +14,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Watch My Tank"
-include(":app")
+include(":app", ":core", ":data", ":domain", ":feature-reminders", ":feature-parameters")
  
