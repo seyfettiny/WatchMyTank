@@ -96,6 +96,7 @@ kotlin {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":data"))
     implementation(project(":feature-reminders"))
     implementation(project(":feature-parameters"))
 
@@ -114,6 +115,7 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.work)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)

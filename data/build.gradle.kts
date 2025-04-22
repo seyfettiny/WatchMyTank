@@ -12,7 +12,7 @@ android {
     flavorDimensions += "environment"
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -55,9 +55,12 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
+    // WorkManager
+    implementation(libs.androidx.work.runtime.ktx)
+
     // DI - Hilt
     implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler) // Use ksp instead of kapt for Hilt
+    ksp(libs.hilt.compiler) // Processor for Hilt Android and Hilt Work
 
     // Testing
     testImplementation(libs.junit)

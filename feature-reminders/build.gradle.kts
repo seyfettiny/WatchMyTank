@@ -12,7 +12,7 @@ android {
     flavorDimensions += "environment"
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -65,6 +65,7 @@ dependencies {
 
     // WorkManager for scheduled reminders
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
 
     // DI - Hilt
     implementation(libs.hilt.android)
