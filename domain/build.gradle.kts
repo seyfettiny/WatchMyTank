@@ -2,9 +2,8 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinJvm) // Use kotlin("jvm") instead of kotlin("android")
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
