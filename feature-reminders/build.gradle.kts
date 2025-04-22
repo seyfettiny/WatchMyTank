@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.syfttny.watchmytank.data"
+    namespace = "com.syfttny.watchmytank.feature.reminders"
     compileSdk = 34
 
     flavorDimensions += "environment"
@@ -33,41 +33,51 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    // Enable build features if needed (e.g., buildConfig)
-    // buildFeatures {
-    //     buildConfig = true
-    // }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.androidxComposeCompiler.get()
+    }
 }
 
 dependencies {
-    implementation(project(":domain"))
     implementation(project(":core"))
+    implementation(project(":domain"))
 
-    // AndroidX & Core KTX (needed for Context, etc.)
-    implementation(libs.androidx.core.ktx)
+    // Compose
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
-    // Room (Local Persistence)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
+    // Lifecycle
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    // WorkManager for scheduled reminders
+    implementation(libs.androidx.work.runtime.ktx)
 
     // DI - Hilt
     implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler) // Use ksp instead of kapt for Hilt
+    ksp(libs.hilt.compiler)
 
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
-    // testImplementation(libs.mockito.core) // Mocking for repository tests
-    // testImplementation(libs.androidx.room.testing) // Room testing utilities
+    // testImplementation(libs.mockito.core) // Mocking for ViewModel tests
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-}
-
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 } 

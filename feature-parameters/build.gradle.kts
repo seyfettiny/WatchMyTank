@@ -1,18 +1,18 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.googleHilt)
+    alias(libs.plugins.googleKsp)
 }
 
 android {
-    namespace = "com.syfttny.watchmytank.core"
+    namespace = "com.syfttny.watchmytank.feature.parameters"
     compileSdk = 34
 
-    // Add flavor dimension awareness
     flavorDimensions += "environment"
 
     defaultConfig {
         minSdk = 24
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -42,24 +42,39 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(project(":core"))
+    implementation(project(":domain"))
+
+    // Compose
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
+    // Lifecycle
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    // Charting Library (Placeholder - choose one)
+    // implementation("com.github.PhilJay:MPAndroidChart:vX.X.X") // MPAndroidChart (requires Compose wrapper or AndroidView)
+    // implementation("...") // Or a Compose-native charting library like Compose-Charts
+
     // DI - Hilt
     implementation(libs.hilt.android)
-    // kapt(libs.hilt.compiler) // Annotation processor dependency - Added in root build.gradle.kts? Check this.
+    ksp(libs.hilt.compiler)
 
+    // Testing
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    // testImplementation(libs.mockito.core) // Mocking for ViewModel tests
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
