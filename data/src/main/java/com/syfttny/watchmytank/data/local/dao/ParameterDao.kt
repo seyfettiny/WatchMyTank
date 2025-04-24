@@ -21,10 +21,20 @@ interface ParameterDao {
     @Query("SELECT * FROM water_parameter_logs WHERE parameterType = :parameterType ORDER BY timestamp DESC")
     fun getParameterHistory(parameterType: ParameterType): Flow<List<ParameterLogEntity>>
 
-    // TODO: Add delete/update methods if required by the repository interface later.
-    // @Query(\"DELETE FROM water_parameter_logs WHERE id = :logId\")
-    // suspend fun deleteLogById(logId: Long)
+    // Methods for Offline Sync
+    @Query("SELECT * FROM water_parameter_logs WHERE isSynced = 0")
+    suspend fun getUnsyncedLogs(): List<ParameterLogEntity> // Use suspend for one-shot worker task
 
-    // @Query(\"DELETE FROM water_parameter_logs WHERE parameterType = :parameterType\")
+    @Query("UPDATE water_parameter_logs SET isSynced = 1 WHERE id = :logId")
+    suspend fun markLogAsSynced(logId: Long)
+
+    // Count of unsynced logs for UI feedback
+    @Query("SELECT COUNT(*) FROM water_parameter_logs WHERE isSynced = 0")
+    fun getUnsyncedLogCount(): Flow<Int>
+
+    // TODO: Add delete/update methods if required by the repository interface later.
+    // @Query("DELETE FROM water_parameter_logs WHERE id = :logId")
+
+    // @Query("DELETE FROM water_parameter_logs WHERE parameterType = :parameterType")
     // suspend fun deleteLogsByType(parameterType: ParameterType)
 } 

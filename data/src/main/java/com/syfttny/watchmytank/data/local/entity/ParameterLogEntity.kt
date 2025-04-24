@@ -23,5 +23,6 @@ data class ParameterLogEntity(
     val timestamp: LocalDateTime,
     val parameterType: ParameterType, // Stored as String via TypeConverter
     val value: Double,
-    val notes: String? = null
+    val notes: String? = null,
+    val isSynced: Boolean = false // Track sync status with Firestore
 ) 

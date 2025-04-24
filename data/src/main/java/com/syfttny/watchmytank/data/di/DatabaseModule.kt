@@ -2,6 +2,9 @@ package com.syfttny.watchmytank.data.di
 
 import android.content.Context
 import androidx.room.Room
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.syfttny.watchmytank.data.local.AppDatabase
 import com.syfttny.watchmytank.data.local.dao.ParameterDao
 import com.syfttny.watchmytank.data.local.dao.ReminderDao

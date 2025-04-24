@@ -2,11 +2,11 @@ package com.syfttny.watchmytank.di
 
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.analytics
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.remoteConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "25b1579c6357c7d52c4e557bdd1d978c",
+    "identityHash": "5fe52334e3ec95d1e30702d41ed69ce7",
     "entities": [
       {
         "tableName": "reminders",
@@ -74,7 +74,7 @@
       },
       {
         "tableName": "water_parameter_logs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `parameterType` TEXT NOT NULL, `value` REAL NOT NULL, `notes` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `parameterType` TEXT NOT NULL, `value` REAL NOT NULL, `notes` TEXT, `isSynced` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -105,6 +105,12 @@
             "columnName": "notes",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "isSynced",
+            "columnName": "isSynced",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -139,7 +145,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '25b1579c6357c7d52c4e557bdd1d978c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5fe52334e3ec95d1e30702d41ed69ce7')"
     ]
   }
 }

@@ -57,12 +57,15 @@ dependencies {
 
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
 
     // DI - Hilt
     implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler) // Processor for Hilt Android and Hilt Work
+    ksp(libs.hilt.compiler)
+    ksp(libs.androidx.hilt.compiler)
 
     // Firebase Firestore
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
 
     // Testing
