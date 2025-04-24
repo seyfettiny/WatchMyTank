@@ -17,13 +17,15 @@ interface ParameterHistoryContract {
      * @param historyLogs List of logs matching the selected filter.
      * @param isLoading Indicates if history data is being loaded.
      * @param error A message describing any error that occurred during loading.
+     * @param unsyncedCount Track count of logs pending sync
      */
     data class State(
         val availableTypes: List<ParameterType> = ParameterType.values().toList(),
         val selectedType: ParameterType = availableTypes.first(), // Default filter
         val historyLogs: List<WaterParameterLog> = emptyList(),
         val isLoading: Boolean = true, // Start in loading state
-        val error: String? = null
+        val error: String? = null,
+        val unsyncedCount: Int = 0 // Track count of logs pending sync
     )
 
     /**

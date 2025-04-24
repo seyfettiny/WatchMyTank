@@ -1,9 +1,11 @@
 package com.syfttny.watchmytank.feature_parameters.ui.history
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.syfttny.watchmytank.domain.model.ParameterType
 import com.syfttny.watchmytank.domain.use_case.GetParameterHistoryUseCase
+import com.syfttny.watchmytank.domain.use_case.GetUnsyncedLogCountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -14,7 +16,8 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ParameterHistoryViewModel @Inject constructor(
-    private val getParameterHistoryUseCase: GetParameterHistoryUseCase
+    private val getParameterHistoryUseCase: GetParameterHistoryUseCase,
+    private val getUnsyncedLogCountUseCase: GetUnsyncedLogCountUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ParameterHistoryContract.State())
@@ -30,6 +33,23 @@ class ParameterHistoryViewModel @Inject constructor(
         // Observe the selected type and load data whenever it changes
         selectedTypeFlow
             .flatMapLatest { type -> loadHistoryForType(type) }
+            .launchIn(viewModelScope)
+
+        // Observe the unsynced count
+        observeUnsyncedCount()
+    }
+
+    private fun observeUnsyncedCount() {
+        getUnsyncedLogCountUseCase()
+            .onEach { count ->
+                _state.update { it.copy(unsyncedCount = count) }
+            }
+            .catch { throwable ->
+                // Log error, maybe show a snackbar? Decide on error handling for this.
+                Log.e("ParameterHistoryVM", "Error observing unsynced count", throwable)
+                // Optionally send an event
+                // _eventChannel.send(ParameterHistoryContract.Event.ShowErrorSnackbar("Failed to check sync status"))
+            }
             .launchIn(viewModelScope)
     }
 

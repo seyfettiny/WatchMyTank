@@ -19,6 +19,11 @@ interface ParameterRepository {
      */
     fun getParameterHistory(parameterType: ParameterType): Flow<List<WaterParameterLog>>
 
+    /**
+     * Gets a Flow emitting the count of parameter logs that haven't been synced yet.
+     */
+    fun getUnsyncedLogCount(): Flow<Int>
+
     // TODO: Add methods for deleting or updating logs if needed.
     // suspend fun deleteParameterLog(logId: Long)
 } 

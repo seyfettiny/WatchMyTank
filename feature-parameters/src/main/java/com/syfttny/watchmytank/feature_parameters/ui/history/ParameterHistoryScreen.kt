@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,7 +34,7 @@ fun ParameterHistoryScreen(
     viewModel: ParameterHistoryViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
     onNavigateToLogParameter: () -> Unit, // Callback to navigate to the logging screen
-    onNavigateToChart: () -> Unit // Callback to navigate to chart screen
+    onNavigateToChart: (ParameterType) -> Unit // Pass selected type to chart
 ) {
     val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -61,8 +62,17 @@ fun ParameterHistoryScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = onNavigateToChart) {
-                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "View Chart")
+                    // Show sync status icon if items are pending
+                    if (state.unsyncedCount > 0) {
+                        Icon(
+                            imageVector = Icons.Default.CloudOff,
+                            contentDescription = "${state.unsyncedCount} logs pending sync",
+                            modifier = Modifier.padding(end = 8.dp), // Add some spacing
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant // Use a muted color
+                        )
+                    }
+                    IconButton(onClick = { onNavigateToChart(state.selectedType) }) { // Pass type
+                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "View Chart for ${state.selectedType.displayName}")
                     }
                 }
             )
