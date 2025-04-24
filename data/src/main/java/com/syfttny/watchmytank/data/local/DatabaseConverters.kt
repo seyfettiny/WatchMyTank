@@ -1,6 +1,7 @@
 package com.syfttny.watchmytank.data.local
 
 import androidx.room.TypeConverter
+import com.syfttny.watchmytank.domain.model.ParameterType
 import com.syfttny.watchmytank.domain.model.ReminderType
 import java.time.Instant
 import java.time.LocalDateTime
@@ -34,6 +35,23 @@ class DatabaseConverters {
 
     @TypeConverter
     fun reminderTypeToString(type: ReminderType?): String? {
+        return type?.name
+    }
+
+    // ParameterType Converters
+    @TypeConverter
+    fun fromParameterType(value: String?): ParameterType? {
+        return value?.let { enumName ->
+            try {
+                ParameterType.valueOf(enumName)
+            } catch (e: IllegalArgumentException) {
+                null // Handle cases where the stored enum name might be invalid
+            }
+        }
+    }
+
+    @TypeConverter
+    fun parameterToString(type: ParameterType?): String? {
         return type?.name
     }
 } 

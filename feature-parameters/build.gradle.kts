@@ -71,6 +71,10 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
+    // Charting
+    implementation(libs.vico.compose.m3)
+    implementation(libs.vico.core)
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

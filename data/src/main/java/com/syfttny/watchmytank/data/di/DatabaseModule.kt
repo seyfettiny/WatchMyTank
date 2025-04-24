@@ -3,8 +3,11 @@ package com.syfttny.watchmytank.data.di
 import android.content.Context
 import androidx.room.Room
 import com.syfttny.watchmytank.data.local.AppDatabase
+import com.syfttny.watchmytank.data.local.dao.ParameterDao
 import com.syfttny.watchmytank.data.local.dao.ReminderDao
+import com.syfttny.watchmytank.data.repository.ParameterRepositoryImpl
 import com.syfttny.watchmytank.data.repository.ReminderRepositoryImpl
+import com.syfttny.watchmytank.domain.repository.ParameterRepository
 import com.syfttny.watchmytank.domain.repository.ReminderRepository
 import dagger.Binds
 import dagger.Module
@@ -38,6 +41,11 @@ object DatabaseModule {
     fun provideReminderDao(appDatabase: AppDatabase): ReminderDao {
         return appDatabase.reminderDao()
     }
+
+    @Provides
+    fun provideParameterDao(appDatabase: AppDatabase): ParameterDao {
+        return appDatabase.parameterDao()
+    }
 }
 
 @Module
@@ -47,6 +55,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindReminderRepository(impl: ReminderRepositoryImpl): ReminderRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindParameterRepository(impl: ParameterRepositoryImpl): ParameterRepository
 
     // Bind other repositories here in the future
 } 
