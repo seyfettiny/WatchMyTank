@@ -62,6 +62,9 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler) // Processor for Hilt Android and Hilt Work
 
+    // Firebase Firestore
+    implementation(libs.firebase.firestore)
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
