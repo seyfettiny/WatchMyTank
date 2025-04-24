@@ -1,6 +1,6 @@
 package com.syfttny.watchmytank.feature_reminders.di
 
-import com.syfttny.watchmytank.domain.use_case.ScheduleReminderUseCase
+import com.syfttny.watchmytank.domain.use_case.*
 import com.syfttny.watchmytank.feature_reminders.use_case.ScheduleReminderUseCaseImpl
 import dagger.Binds
 import dagger.Module
@@ -10,15 +10,27 @@ import dagger.hilt.android.scopes.ViewModelScoped
 
 /**
  * Hilt module providing dependencies specific to the reminder feature,
- * like the implementation for ScheduleReminderUseCase which lives in this module.
+ * including Use Case implementations.
  */
 @Module
-@InstallIn(ViewModelComponent::class) // Scope to ViewModels using this UseCase
+@InstallIn(ViewModelComponent::class) // Scope to ViewModels using these UseCases
 abstract class ReminderFeatureModule {
 
     @Binds
-    @ViewModelScoped // Use the same scope as the InstallIn component
+    @ViewModelScoped
     abstract fun bindScheduleReminderUseCase(impl: ScheduleReminderUseCaseImpl): ScheduleReminderUseCase
 
-    // Add bindings for other feature-specific use case implementations here if needed
+    @Binds
+    @ViewModelScoped
+    abstract fun bindGetReminderUseCase(impl: GetReminderUseCaseImpl): GetReminderUseCase
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindAddReminderUseCase(impl: AddReminderUseCaseImpl): AddReminderUseCase
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindUpdateReminderUseCase(impl: UpdateReminderUseCaseImpl): UpdateReminderUseCase
+
+    // TODO: We will likely need bindings for DeleteReminderUseCase later
 } 

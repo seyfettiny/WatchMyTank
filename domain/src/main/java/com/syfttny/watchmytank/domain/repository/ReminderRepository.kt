@@ -4,59 +4,47 @@ import com.syfttny.watchmytank.domain.model.Reminder
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Interface defining the contract for accessing reminder data.
- * This abstracts the data source (local or remote) from the domain layer.
+ * Interface defining operations for accessing and modifying Reminder data.
+ * Implementations will reside in the data layer.
  */
 interface ReminderRepository {
 
     /**
-     * Adds a new reminder or updates an existing one.
-     * @param reminder The reminder to add or update.
-     * @return The ID of the inserted/updated reminder.
+     * Retrieves a specific reminder by its unique ID.
+     * @param id The ID of the reminder to retrieve.
+     * @return The [Reminder] object if found, null otherwise.
      */
-    suspend fun saveReminder(reminder: Reminder): Long
+    suspend fun getReminderById(id: Long): Reminder?
+
+    /**
+     * Retrieves all reminders as a Flow, allowing observation of changes.
+     * This might be deprecated or removed in favor of getAllRemindersStream if they serve the same purpose.
+     * @return A [Flow] emitting a list of all [Reminder] objects.
+     */
+    fun getReminders(): Flow<List<Reminder>>
+
+    /**
+     * Retrieves all reminders as a Flow, emitting updates whenever the underlying data changes.
+     * @return A [Flow] emitting a list of all [Reminder] objects.
+     */
+    fun getAllRemindersStream(): Flow<List<Reminder>>
+
+    /**
+     * Inserts a new reminder.
+     * @param reminder The [Reminder] object to insert.
+     * @return The ID of the newly inserted reminder.
+     */
+    suspend fun insertReminder(reminder: Reminder): Long
 
     /**
      * Updates an existing reminder.
-     * @param reminder The reminder with updated values.
+     * @param reminder The [Reminder] object with updated details.
      */
     suspend fun updateReminder(reminder: Reminder)
-
-    /**
-     * Deletes a specific reminder.
-     * @param reminder The reminder to delete.
-     */
-    suspend fun deleteReminder(reminder: Reminder)
 
     /**
      * Deletes a reminder by its unique ID.
      * @param id The ID of the reminder to delete.
      */
-    suspend fun deleteReminderById(id: Long)
-
-    /**
-     * Retrieves a specific reminder by its ID.
-     * @param id The ID of the reminder.
-     * @return A Flow emitting the Reminder, or null if not found.
-     */
-    fun getReminderById(id: Long): Flow<Reminder?>
-
-    /**
-     * Retrieves a stream of all reminders, typically ordered for display.
-     * @return A Flow emitting the list of all Reminders.
-     */
-    fun getAllRemindersStream(): Flow<List<Reminder>>
-
-    /**
-     * Retrieves a stream of all *enabled* reminders, ordered by the next trigger time.
-     * @return A Flow emitting the list of enabled Reminders.
-     */
-    fun getEnabledRemindersStreamOrderedByNextTrigger(): Flow<List<Reminder>>
-
-    /**
-     * Retrieves reminders that are due based on the current time.
-     * @param currentTimeEpochSeconds The current time as epoch seconds UTC.
-     * @return A list of due Reminders.
-     */
-    suspend fun getDueReminders(currentTimeEpochSeconds: Long): List<Reminder>
+    suspend fun deleteReminder(id: Long)
 } 

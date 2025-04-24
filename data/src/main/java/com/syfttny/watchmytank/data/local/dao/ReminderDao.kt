@@ -45,10 +45,10 @@ interface ReminderDao {
     /**
      * Retrieves a specific reminder by its ID.
      * @param id The ID of the reminder to retrieve.
-     * @return A Flow emitting the ReminderEntity, or null if not found.
+     * @return The ReminderEntity if found, or null otherwise.
      */
     @Query("SELECT * FROM reminders WHERE id = :id")
-    fun getReminderById(id: Long): Flow<ReminderEntity?>
+    suspend fun getReminderById(id: Long): ReminderEntity?
 
     /**
      * Retrieves all reminders from the database, ordered by creation time (newest first).

@@ -18,23 +18,24 @@ class ReminderRepositoryImpl @Inject constructor(
     private val reminderDao: ReminderDao
 ) : ReminderRepository {
 
-    override suspend fun saveReminder(reminder: Reminder): Long {
+    override suspend fun insertReminder(reminder: Reminder): Long {
         val entity = reminder.toEntity()
         // Use insert which handles both insert and update (replace strategy)
         return reminderDao.insertReminder(entity)
     }
 
-    override suspend fun deleteReminder(reminder: Reminder) {
-        reminderDao.deleteReminder(reminder.toEntity())
-    }
-
-    override suspend fun deleteReminderById(id: Long) {
+    override suspend fun deleteReminder(id: Long) {
         reminderDao.deleteReminderById(id)
     }
 
-    override fun getReminderById(id: Long): Flow<Reminder?> {
-        return reminderDao.getReminderById(id).map { entity ->
-            entity?.toDomain()
+    override suspend fun getReminderById(id: Long): Reminder? {
+        val entity = reminderDao.getReminderById(id)
+        return entity?.toDomain()
+    }
+
+    override fun getReminders(): Flow<List<Reminder>> {
+        return reminderDao.getAllReminders().map { entities ->
+            entities.toDomain()
         }
     }
 
@@ -42,16 +43,6 @@ class ReminderRepositoryImpl @Inject constructor(
         return reminderDao.getAllReminders().map { entities ->
             entities.toDomain()
         }
-    }
-
-    override fun getEnabledRemindersStreamOrderedByNextTrigger(): Flow<List<Reminder>> {
-        return reminderDao.getAllEnabledRemindersOrderedByNextTrigger().map { entities ->
-            entities.toDomain()
-        }
-    }
-
-     override suspend fun getDueReminders(currentTimeEpochSeconds: Long): List<Reminder> {
-        return reminderDao.getDueReminders(currentTimeEpochSeconds).toDomain()
     }
 
     override suspend fun updateReminder(reminder: Reminder) {

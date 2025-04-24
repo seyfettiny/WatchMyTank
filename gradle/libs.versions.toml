@@ -7,7 +7,7 @@
     googleServices = "4.4.1"
     firebaseCrashlyticsGradle = "2.9.9"
     workmanager = "2.9.0"
-    hiltWork = "1.2.0"
+    hiltWork = "1.1.0-alpha01"
 
     # AndroidX
     androidxCore = "1.13.1"
@@ -88,6 +88,8 @@
     javax-inject = { group = "javax.inject", name = "javax.inject", version = "1" }
 
     androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltWork" }
+    # Define the androidx hilt compiler library
+    androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltWork" }
 
     [plugins]
     androidApplication = { id = "com.android.application", version.ref = "androidGradlePlugin" }

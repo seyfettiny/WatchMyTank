@@ -52,7 +52,7 @@ class ReminderWorker @AssistedInject constructor(
 
         return withContext(Dispatchers.IO) {
             try {
-                val reminder = reminderRepository.getReminderById(reminderId).firstOrNull()
+                val reminder = reminderRepository.getReminderById(reminderId)
 
                 if (reminder == null || !reminder.isEnabled) {
                     Log.w(TAG, "Reminder not found or disabled: $reminderId. Stopping chain.")
@@ -86,7 +86,6 @@ class ReminderWorker @AssistedInject constructor(
 
                 Log.i(TAG, "Successfully processed and rescheduled reminder ${reminder.id}")
                 Result.success()
-
             } catch (e: Exception) {
                 Log.e(TAG, "Error processing reminder $reminderId", e)
                 Result.retry() // Retry on transient errors

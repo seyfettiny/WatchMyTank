@@ -13,6 +13,8 @@ import java.time.temporal.ChronoUnit
  * @property cronExpression The cron expression string for the CRON type. Null otherwise.
  * @property creationTime Timestamp when the reminder was initially created.
  * @property nextTriggerTime Timestamp for the next scheduled notification.
+ * @property triggerHour Hour of the day (0-23)
+ * @property triggerMinute Minute of the hour (0-59)
  * @property isEnabled Whether the reminder is currently active.
  * @property lastTriggeredTime Timestamp when the reminder last successfully triggered a notification.
  */
@@ -24,6 +26,8 @@ data class Reminder(
     val cronExpression: String? = null,
     val creationTime: LocalDateTime,
     var nextTriggerTime: LocalDateTime,
+    val triggerHour: Int? = null,
+    val triggerMinute: Int? = null,
     val isEnabled: Boolean = true,
     var lastTriggeredTime: LocalDateTime? = null
 ) {

@@ -11,6 +11,6 @@ class DeleteReminderUseCaseImpl @Inject constructor(
 ) : DeleteReminderUseCase {
 
     override suspend operator fun invoke(reminderId: Long) {
-        reminderRepository.deleteReminderById(reminderId)
+        reminderRepository.deleteReminder(reminderId)
     }
 } 
