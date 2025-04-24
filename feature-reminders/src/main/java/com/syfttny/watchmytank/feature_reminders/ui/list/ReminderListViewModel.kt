@@ -71,8 +71,11 @@ class ReminderListViewModel @Inject constructor(
     private fun deleteReminder(reminderId: Long) {
         viewModelScope.launch {
             try {
+                // TODO: (Undo Delete) Fetch the reminder *before* deleting it to allow for restoration.
+                // val reminderToDelete = getReminderUseCase(reminderId) // Requires GetReminderUseCase injection
                 deleteReminderUseCase(reminderId)
-                // Optionally: Send an event to show an 'Undo' snackbar
+                // Optionally: Send an event to show an \'Undo\' snackbar
+                 // TODO: (Undo Delete) Implement the actual undo logic, perhaps by re-adding the fetched reminder.
                  _eventChannel.send(ReminderListContract.Event.ShowUndoDeleteSnackbar(reminderId))
             } catch (e: Exception) {
                 _state.update { it.copy(error = e.localizedMessage ?: "Failed to delete reminder") }

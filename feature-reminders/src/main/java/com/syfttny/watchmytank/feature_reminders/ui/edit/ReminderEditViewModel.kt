@@ -127,7 +127,7 @@ class ReminderEditViewModel @Inject constructor(
             return
         }
         if (currentState.type == ReminderType.CRON && currentState.cronExpression.isBlank()) {
-            // TODO: Add proper CRON validation
+            // TODO: (CRON Validation) Implement robust CRON expression validation beyond just isBlank().
             _state.update { it.copy(error = "CRON expression cannot be empty") }
             return
         }
@@ -146,6 +146,7 @@ class ReminderEditViewModel @Inject constructor(
                     type = currentState.type,
                     frequencyDays = if (currentState.type == ReminderType.EVERY_N_DAYS) currentState.frequencyDays.toIntOrNull() else null,
                     cronExpression = if (currentState.type == ReminderType.CRON) currentState.cronExpression.trim() else null,
+                    // TODO: Preserve original creationTime on updates. Load it in loadReminder and pass it here.
                     creationTime = LocalDateTime.now(), // TODO: Should preserve original creationTime on updates
                     isEnabled = currentState.isEnabled,
                     triggerHour = currentState.triggerHour,

@@ -20,6 +20,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.syfttny.watchmytank.domain.model.ReminderType
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Calendar
+import androidx.compose.ui.tooling.preview.Preview
+import com.syfttny.watchmytank.core.ui.theme.WatchMyTankTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -263,5 +265,62 @@ private fun ReminderTypeSelector(
     }
 }
 
+@Preview(showBackground = true, name = "Edit Screen Content - New Daily")
+@Composable
+private fun ReminderEditContentNewDailyPreview() {
+    WatchMyTankTheme {
+        ReminderEditContent(
+            state = ReminderEditContract.State(type = ReminderType.DAILY, isEditing = false),
+            onIntent = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Edit Screen Content - Edit Every N Days")
+@Composable
+private fun ReminderEditContentEditNDaysPreview() {
+    WatchMyTankTheme {
+        ReminderEditContent(
+            state = ReminderEditContract.State(
+                isEditing = true,
+                name = "Weekly Water Change",
+                type = ReminderType.EVERY_N_DAYS,
+                frequencyDays = "7",
+                triggerHour = 10,
+                triggerMinute = 30,
+                isEnabled = true
+            ),
+            onIntent = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Edit Screen Content - Edit CRON")
+@Composable
+private fun ReminderEditContentEditCronPreview() {
+    WatchMyTankTheme {
+        ReminderEditContent(
+            state = ReminderEditContract.State(
+                isEditing = true,
+                name = "Custom Feed",
+                type = ReminderType.CRON,
+                cronExpression = "0 18 * * MON-FRI",
+                isEnabled = true
+            ),
+            onIntent = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Edit Screen Content - Error")
+@Composable
+private fun ReminderEditContentWithErrorPreview() {
+    WatchMyTankTheme {
+        ReminderEditContent(
+            state = ReminderEditContract.State(error = "Name cannot be empty"),
+            onIntent = {}
+        )
+    }
+}
 
 // TODO: Add Previews for ReminderEditScreen/Content 

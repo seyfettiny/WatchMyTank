@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -32,6 +34,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.syfttny.watchmytank.domain.model.Reminder
 import com.syfttny.watchmytank.feature_reminders.ui.list.components.ReminderListItem
 import kotlinx.coroutines.flow.collectLatest
+import androidx.compose.ui.tooling.preview.Preview
+import com.syfttny.watchmytank.core.ui.theme.WatchMyTankTheme
+import com.syfttny.watchmytank.domain.model.ReminderType
+import java.time.LocalDateTime
+import com.syfttny.watchmytank.core.ui.components.InfoStateView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,45 +92,105 @@ private fun ReminderListContent(
     onIntent: (ReminderListContract.Intent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize(),
-            // Remove center arrangement if list should start from top
-            // .padding(16.dp), // Padding might be better applied around LazyColumn
-        horizontalAlignment = Alignment.CenterHorizontally,
-        // verticalArrangement = Arrangement.Center // Remove this
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        if (state.isLoading) {
-             // Keep loading indicator centered
-             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                 CircularProgressIndicator()
-             }
-        } else if (state.reminders.isEmpty()) {
-            // Keep empty message centered
-             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                 Text("No reminders yet. Tap '+' to add one.", style = MaterialTheme.typography.bodyLarge)
+        when {
+            state.isLoading -> {
+                CircularProgressIndicator()
             }
-        } else {
-            LazyColumn(
-                 modifier = Modifier.fillMaxSize(),
-                 contentPadding = PaddingValues(16.dp), // Apply padding here
-                 verticalArrangement = Arrangement.spacedBy(8.dp) // Space between items
-            ) {
-                 items(state.reminders, key = { it.id }) { reminder ->
-                     ReminderListItem(
-                         reminder = reminder,
-                         onEditClick = { onIntent(ReminderListContract.Intent.EditReminder(reminder.id)) },
-                         onDeleteClick = { onIntent(ReminderListContract.Intent.DeleteReminder(reminder.id)) }
-                     )
-                 }
-             }
+            state.reminders.isEmpty() -> {
+                InfoStateView(
+                    message = "No reminders yet. \nTap '+' to add one.",
+                    icon = Icons.Filled.Warning
+                )
+            }
+            else -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(state.reminders, key = { it.id }) { reminder ->
+                        ReminderListItem(
+                            reminder = reminder,
+                            onEditClick = { onIntent(ReminderListContract.Intent.EditReminder(reminder.id)) },
+                            onDeleteClick = { onIntent(ReminderListContract.Intent.DeleteReminder(reminder.id)) }
+                        )
+                    }
+                }
+            }
         }
+    }
+}
 
-        // Display error if present (could also be handled via snackbar only)
-        /* // Removing this as error is primarily shown via Snackbar now
-        state.error?.let {
-            Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-        }
-        */
+@Preview(showBackground = true, name = "List Screen Content - Empty")
+@Composable
+private fun ReminderListContentEmptyPreview() {
+    WatchMyTankTheme {
+        ReminderListContent(
+            state = ReminderListContract.State(isLoading = false, reminders = emptyList()),
+            onIntent = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "List Screen Content - Loading")
+@Composable
+private fun ReminderListContentLoadingPreview() {
+    WatchMyTankTheme {
+        ReminderListContent(
+            state = ReminderListContract.State(isLoading = true, reminders = emptyList()),
+            onIntent = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "List Screen Content - Data")
+@Composable
+private fun ReminderListContentDataPreview() {
+    val now = LocalDateTime.now()
+    val sampleReminders = listOf(
+        Reminder(
+            id = 1,
+            name = "Morning Feed",
+            type = ReminderType.DAILY,
+            creationTime = now.minusDays(1),
+            nextTriggerTime = now.plusHours(1),
+            triggerHour = 8,
+            triggerMinute = 0,
+            isEnabled = true,
+            lastTriggeredTime = now.minusDays(1).withHour(8).withMinute(0)
+        ),
+        Reminder(
+            id = 2,
+            name = "Water Change",
+            type = ReminderType.EVERY_N_DAYS,
+            frequencyDays = 7,
+            creationTime = now.minusDays(3),
+            nextTriggerTime = now.plusDays(4),
+            triggerHour = 10,
+            triggerMinute = 0,
+            isEnabled = true,
+            lastTriggeredTime = now.minusDays(3).withHour(10).withMinute(0)
+        ),
+        Reminder(
+            id = 3,
+            name = "Night Feed",
+            type = ReminderType.DAILY,
+            creationTime = now.minusDays(1),
+            nextTriggerTime = now.plusHours(12),
+            triggerHour = 20,
+            triggerMinute = 0,
+            isEnabled = false,
+            lastTriggeredTime = now.minusDays(1).withHour(20).withMinute(0)
+        ),
+    )
+    WatchMyTankTheme {
+        ReminderListContent(
+            state = ReminderListContract.State(isLoading = false, reminders = sampleReminders),
+            onIntent = {}
+        )
     }
 } 
