@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.syfttny.watchmytank.feature_parameters.navigation.ParameterDestinations
 import com.syfttny.watchmytank.feature_parameters.navigation.ParameterDestinations.PARAMETER_GRAPH_ROUTE
 import com.syfttny.watchmytank.feature_parameters.navigation.addParameterGraph
 import com.syfttny.watchmytank.feature_reminders.navigation.REMINDER_GRAPH_ROUTE
@@ -30,7 +31,9 @@ fun AppNavigation(
         composable(route = DASHBOARD_ROUTE) {
             DashboardScreen(
                 onNavigateToReminders = { navController.navigate(REMINDER_GRAPH_ROUTE) },
-                onNavigateToParameters = { navController.navigate(PARAMETER_GRAPH_ROUTE) }
+                onNavigateToParameters = { tankId ->
+                    navController.navigate(PARAMETER_GRAPH_ROUTE + "/$tankId")
+                }
             )
         }
 

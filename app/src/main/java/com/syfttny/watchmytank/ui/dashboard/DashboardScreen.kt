@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,11 +15,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.syfttny.watchmytank.core.ui.theme.WatchMyTankTheme // Assuming theme is here
 
+// Hardcoded Tank ID for now - Replace with actual logic later
+private const val HARDCODED_TANK_ID = "default_tank"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     onNavigateToReminders: () -> Unit,
-    onNavigateToParameters: () -> Unit,
+    onNavigateToParameters: (tankId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -42,10 +46,10 @@ fun DashboardScreen(
             )
             DashboardButton(
                 text = "Parameters",
-                icon = Icons.Default.Add,
-                onClick = onNavigateToParameters
+                icon = Icons.Default.Info,
+                onClick = { onNavigateToParameters(HARDCODED_TANK_ID) }
             )
-            // Add more buttons/cards for future features (e.g., Settings, Tank Profile)
+            // TODO: Add multi-tank support and pass the correct tankId
         }
     }
 }
