@@ -68,6 +68,9 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
 
+    // JSON Parsing (for TypeConverters)
+    implementation(libs.gson)
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

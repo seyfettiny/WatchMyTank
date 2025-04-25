@@ -18,7 +18,7 @@ import com.syfttny.watchmytank.data.local.entity.ReminderEntity
         ReminderEntity::class,
         ParameterLogEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(DatabaseConverters::class)

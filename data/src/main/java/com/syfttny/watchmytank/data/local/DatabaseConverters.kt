@@ -1,6 +1,8 @@
 package com.syfttny.watchmytank.data.local
 
 import androidx.room.TypeConverter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.syfttny.watchmytank.domain.model.ParameterType
 import com.syfttny.watchmytank.domain.model.ReminderType
 import java.time.Instant
@@ -11,6 +13,8 @@ import java.time.ZoneOffset
  * Room TypeConverters for custom data types used in the database entities.
  */
 class DatabaseConverters {
+
+    private val gson = Gson() // Gson instance for JSON conversion
 
     // LocalDateTime Converters
     // Room doesn't natively support LocalDateTime, so we convert to/from Long (epoch seconds)
@@ -53,5 +57,30 @@ class DatabaseConverters {
     @TypeConverter
     fun parameterToString(type: ParameterType?): String? {
         return type?.name
+    }
+
+    // Parameter Map Converters (for Map<ParameterType, Double>)
+    @TypeConverter
+    fun fromParameterMap(map: Map<ParameterType, Double>?): String? {
+        return map?.let { gson.toJson(it) }
+    }
+
+    @TypeConverter
+    fun toParameterMap(json: String?): Map<ParameterType, Double>? {
+        return json?.let {
+            val type = object : TypeToken<Map<ParameterType, Double>>() {}.type
+            gson.fromJson(it, type)
+        }
+    }
+
+    // Instant Converter (as used in ParameterLogEntity)
+    @TypeConverter
+    fun instantToLong(instant: Instant?): Long? {
+        return instant?.toEpochMilli()
+    }
+
+    @TypeConverter
+    fun longToInstant(value: Long?): Instant? {
+        return value?.let { Instant.ofEpochMilli(it) }
     }
 } 
