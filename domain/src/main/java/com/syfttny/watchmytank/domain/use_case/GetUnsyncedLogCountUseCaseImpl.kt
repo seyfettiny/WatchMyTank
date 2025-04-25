@@ -9,6 +9,9 @@ class GetUnsyncedLogCountUseCaseImpl @Inject constructor(
 ) : GetUnsyncedLogCountUseCase {
 
     override fun invoke(): Flow<Int> {
-        return repository.getUnsyncedLogCount()
+        throw UnsupportedOperationException(
+            "GetUnsyncedLogCountUseCaseImpl is deprecated. " +
+            "Unsynced count is not directly exposed by the new ParameterRepository."
+        )
     }
 } 

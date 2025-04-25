@@ -1,29 +1,35 @@
 package com.syfttny.watchmytank.domain.repository
 
-import com.syfttny.watchmytank.domain.model.ParameterType
-import com.syfttny.watchmytank.domain.model.WaterParameterLog
+import com.syfttny.watchmytank.domain.model.ParameterLog
 import kotlinx.coroutines.flow.Flow
 
-// TODO: Consider adding Result<Unit, Error> or similar for logParameter for better error handling.
+/**
+ * Interface defining operations for managing water parameter log sets.
+ * This interface focuses on the new model where multiple parameters are logged together.
+ */
 interface ParameterRepository {
-    /**
-     * Logs a new water parameter reading.
-     * @param log The parameter log entry to save.
-     */
-    suspend fun logParameter(log: WaterParameterLog)
 
     /**
-     * Gets a stream of historical data for a specific parameter type.
-     * @param parameterType The type of parameter to retrieve history for.
-     * @return A Flow emitting a list of logs for the requested parameter, ordered by timestamp descending.
+     * Saves a new set of parameter readings.
+     *
+     * @param parameterLog The log entry set to save.
+     * @throws Exception if saving fails (e.g., database error, validation error handled by use case).
      */
-    fun getParameterHistory(parameterType: ParameterType): Flow<List<WaterParameterLog>>
+    suspend fun saveParameterLog(parameterLog: ParameterLog)
 
     /**
-     * Gets a Flow emitting the count of parameter logs that haven't been synced yet.
+     * Gets a Flow emitting the list of all parameter log sets for a specific tank,
+     * ordered by timestamp descending.
+     *
+     * @param tankId The ID of the tank to retrieve logs for.
+     * @return A Flow emitting a list of [ParameterLog].
      */
-    fun getUnsyncedLogCount(): Flow<Int>
+    fun getParameterLogSets(tankId: String): Flow<List<ParameterLog>>
 
-    // TODO: Add methods for deleting or updating logs if needed.
-    // suspend fun deleteParameterLog(logId: Long)
+    // TODO: Add methods for deleting or updating log sets if needed.
+    // suspend fun deleteParameterLogSet(logSetId: String)
+
+    // TODO: Define methods for interacting with the sync status/worker if needed at this level.
+    // For example, getting unsynced sets might be an internal detail of the data layer implementation
+    // used by a sync worker, rather than part of the public repository interface.
 } 

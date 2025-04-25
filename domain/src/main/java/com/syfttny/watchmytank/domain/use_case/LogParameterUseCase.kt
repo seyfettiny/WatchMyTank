@@ -1,10 +1,10 @@
 package com.syfttny.watchmytank.domain.use_case
 
-import com.syfttny.watchmytank.domain.model.WaterParameterLog
+import com.syfttny.watchmytank.domain.model.ParameterLog
 
 /**
- * Use case for logging a single water parameter reading.
+ * Use case for logging a new set of water parameter readings.
  */
 interface LogParameterUseCase {
-    suspend operator fun invoke(log: WaterParameterLog)
+    suspend operator fun invoke(log: ParameterLog)
 } 

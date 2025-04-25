@@ -1,3 +1,6 @@
+// TODO: [Refactor Parameter Logging] This model represents the OLD single-parameter logging system.
+// It will likely need to be refactored or replaced when the new system using ParameterLog
+// (which logs sets of parameters) is fully integrated with Room caching and remote persistence.
 package com.syfttny.watchmytank.domain.model
 
 import java.time.LocalDateTime

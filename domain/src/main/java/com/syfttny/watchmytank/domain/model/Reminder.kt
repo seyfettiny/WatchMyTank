@@ -2,6 +2,7 @@ package com.syfttny.watchmytank.domain.model
 
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import com.syfttny.watchmytank.domain.model.ReminderType
 
 /**
  * Represents a user-defined reminder for aquarium tasks.
