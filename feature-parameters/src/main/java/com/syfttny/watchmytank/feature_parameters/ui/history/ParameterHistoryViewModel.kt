@@ -1,11 +1,14 @@
 package com.syfttny.watchmytank.feature_parameters.ui.history
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.entry.FloatEntry
+import com.syfttny.watchmytank.domain.model.ParameterLog
 import com.syfttny.watchmytank.domain.model.ParameterType
-import com.syfttny.watchmytank.domain.use_case.GetParameterHistoryUseCase
-import com.syfttny.watchmytank.domain.use_case.GetUnsyncedLogCountUseCase
+import com.syfttny.watchmytank.domain.use_case.GetParameterLogSetsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -16,77 +19,102 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ParameterHistoryViewModel @Inject constructor(
-    private val getParameterHistoryUseCase: GetParameterHistoryUseCase,
-    private val getUnsyncedLogCountUseCase: GetUnsyncedLogCountUseCase
+    getParameterLogSetsUseCase: GetParameterLogSetsUseCase,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(ParameterHistoryContract.State())
-    val state = _state.asStateFlow()
+    private val currentTankId: String = savedStateHandle.get<String>("tankId") ?: "DUMMY_TANK_ID"
 
     private val _eventChannel = Channel<ParameterHistoryContract.Event>()
-    val events = _eventChannel.receiveAsFlow()
+    val events: Flow<ParameterHistoryContract.Event> = _eventChannel.receiveAsFlow()
 
-    // Trigger to reload data when the selected type changes
-    private val selectedTypeFlow = MutableStateFlow(_state.value.selectedType)
+    // Flow for raw data and loading/error state
+    private val _logsDataFlow: StateFlow<LogsDataResult> = flow {
+        if (currentTankId == "DUMMY_TANK_ID") {
+            emit(LogsDataResult.Error("Tank ID not provided."))
+            return@flow
+        }
+        // Emit loading first
+        emit(LogsDataResult.Loading)
+        // Collect logs from the use case
+        getParameterLogSetsUseCase(currentTankId)
+            .catch { e -> emit(LogsDataResult.Error(e.localizedMessage ?: "Failed to load parameter history")) }
+            .collect { logs -> emit(LogsDataResult.Success(logs)) }
 
-    init {
-        // Observe the selected type and load data whenever it changes
-        selectedTypeFlow
-            .flatMapLatest { type -> loadHistoryForType(type) }
-            .launchIn(viewModelScope)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = LogsDataResult.Loading // Start in loading state
+    )
 
-        // Observe the unsynced count
-        observeUnsyncedCount()
-    }
+    // StateFlow for the UI state, derived from the data flow
+    val state: StateFlow<ParameterHistoryContract.State> = _logsDataFlow.map { result ->
+        val isLoading = result is LogsDataResult.Loading
+        val error = (result as? LogsDataResult.Error)?.message
+        val logs = (result as? LogsDataResult.Success)?.logs ?: emptyList()
 
-    private fun observeUnsyncedCount() {
-        getUnsyncedLogCountUseCase()
-            .onEach { count ->
-                _state.update { it.copy(unsyncedCount = count) }
-            }
-            .catch { throwable ->
-                // Log error, maybe show a snackbar? Decide on error handling for this.
-                Log.e("ParameterHistoryVM", "Error observing unsynced count", throwable)
-                // Optionally send an event
-                // _eventChannel.send(ParameterHistoryContract.Event.ShowErrorSnackbar("Failed to check sync status"))
-            }
-            .launchIn(viewModelScope)
-    }
+        // Process logs into chart data only when successful
+        val chartProducers = if (result is LogsDataResult.Success) {
+            processLogsForCharts(result.logs)
+        } else {
+            // Return empty producers if loading or error, preserving previous ones might be complex here
+            emptyMap()
+        }
 
-    fun handleIntent(intent: ParameterHistoryContract.Intent) {
-        when (intent) {
-            is ParameterHistoryContract.Intent.SelectFilterType -> {
-                // Update state and trigger reload via selectedTypeFlow
-                if (_state.value.selectedType != intent.type) {
-                    _state.update { it.copy(selectedType = intent.type, isLoading = true, error = null) }
-                    selectedTypeFlow.value = intent.type
+        ParameterHistoryContract.State(
+            isLoading = isLoading,
+            error = error,
+            chartDataProducers = chartProducers
+            // availableChartTypes remains constant for now
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = ParameterHistoryContract.State() // Initial UI state
+    )
+
+    // Helper function to process logs, now returns the map
+    private fun processLogsForCharts(logs: List<ParameterLog>): Map<ParameterType, ChartEntryModelProducer> {
+        Log.d("ParameterHistoryVM", "Processing ${logs.size} log sets for charts.")
+        val producers = mutableMapOf<ParameterType, ChartEntryModelProducer>()
+        val allEntries = mutableMapOf<ParameterType, MutableList<FloatEntry>>()
+        val availableTypes = ParameterHistoryContract.State().availableChartTypes // Get default types
+
+        availableTypes.forEach {
+            producers[it] = ChartEntryModelProducer()
+            allEntries[it] = mutableListOf()
+        }
+
+        val sortedLogs = logs.sortedBy { it.timestamp }
+
+        sortedLogs.forEachIndexed { index, log ->
+            val xValue = index.toFloat()
+            log.parameters.forEach { (type, value) ->
+                if (type in availableTypes) {
+                    allEntries[type]?.add(FloatEntry(x = xValue, y = value.toFloat()))
                 }
             }
         }
+
+        allEntries.forEach { (type, entries) ->
+            producers[type]?.setEntries(entries)
+            Log.d("ParameterHistoryVM", "Set ${entries.size} entries for $type")
+        }
+        Log.d("ParameterHistoryVM", "Finished processing chart data.")
+        return producers
     }
 
-    private fun loadHistoryForType(type: ParameterType): Flow<Unit> {
-        return getParameterHistoryUseCase(type)
-            .onEach { logs ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        historyLogs = logs,
-                        error = null
-                    )
-                }
-            }
-            .catch { throwable ->
-                val errorMessage = throwable.localizedMessage ?: "Failed to load history for ${type.displayName}"
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        historyLogs = emptyList(), // Clear logs on error
-                        error = errorMessage
-                    )
-                }
-                _eventChannel.send(ParameterHistoryContract.Event.ShowErrorSnackbar(errorMessage))
-            }
-            .map { Unit } // Map to Flow<Unit> for flatMapLatest
+    // Handle error helper (can be used by specific actions if needed, otherwise handled by flow)
+    private suspend fun handleError(message: String) {
+        Log.e("ParameterHistoryVM", "Error: $message")
+        // Error state is now handled by the state flow mapping
+        _eventChannel.send(ParameterHistoryContract.Event.ShowErrorSnackbar(message))
     }
+}
+
+// Sealed class to represent the result of loading logs
+private sealed class LogsDataResult {
+    object Loading : LogsDataResult()
+    data class Success(val logs: List<ParameterLog>) : LogsDataResult()
+    data class Error(val message: String) : LogsDataResult()
 } 

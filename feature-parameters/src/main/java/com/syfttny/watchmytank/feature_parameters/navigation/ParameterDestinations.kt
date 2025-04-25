@@ -14,4 +14,11 @@ object ParameterDestinations {
     // const val PARAMETER_DETAIL_ARG_ID = "parameterId"
     // const val PARAMETER_DETAIL_ROUTE = "parameter_detail/{$PARAMETER_DETAIL_ARG_ID}"
     // fun parameterDetailRoute(parameterId: Long) = "parameter_detail/$parameterId"
+
+    // New routes
+    const val PARAMETER_CHARTS_ROUTE = "parameter_charts"
+    const val LOG_PARAMETERS_ROUTE = "log_parameters"
+
+    // Argument names (e.g., if passing tankId)
+    const val TANK_ID_ARG = "tankId"
 } 

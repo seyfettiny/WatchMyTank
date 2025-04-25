@@ -1,39 +1,40 @@
 package com.syfttny.watchmytank.feature_parameters.ui.history
 
+import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.syfttny.watchmytank.domain.model.ParameterLog
 import com.syfttny.watchmytank.domain.model.ParameterType
-import com.syfttny.watchmytank.domain.model.WaterParameterLog
 
 /**
- * Defines the contract (State, Event, Intent) for the Parameter History screen,
- * following the MVI pattern.
+ * Defines the contract (State, Event, Intent) for the Parameter History/Chart screen.
  */
 interface ParameterHistoryContract {
 
     /**
-     * Represents the current state of the Parameter History UI.
+     * Represents the current state of the Parameter History/Chart UI.
      *
-     * @param availableTypes List of parameter types the user can filter by.
-     * @param selectedType The currently selected filter type.
-     * @param historyLogs List of logs matching the selected filter.
-     * @param isLoading Indicates if history data is being loaded.
+     * @param isLoading Indicates if data is being loaded.
      * @param error A message describing any error that occurred during loading.
-     * @param unsyncedCount Track count of logs pending sync
+     * @param chartDataProducers A map holding the data producers for each parameter type's chart.
+     *                         The key is the ParameterType, value is the producer for Vico.
+     * @param availableChartTypes The list of parameter types for which charts are available/configured.
      */
     data class State(
-        val availableTypes: List<ParameterType> = ParameterType.values().toList(),
-        val selectedType: ParameterType = availableTypes.first(), // Default filter
-        val historyLogs: List<WaterParameterLog> = emptyList(),
-        val isLoading: Boolean = true, // Start in loading state
+        val isLoading: Boolean = true,
         val error: String? = null,
-        val unsyncedCount: Int = 0 // Track count of logs pending sync
+        val chartDataProducers: Map<ParameterType, ChartEntryModelProducer> = emptyMap(),
+        val availableChartTypes: List<ParameterType> = listOf(
+            ParameterType.TEMPERATURE,
+            ParameterType.PH,
+            ParameterType.AMMONIA,
+            ParameterType.NITRITE,
+            ParameterType.NITRATE
+        ) // Default types to display
     )
 
     /**
      * Represents one-off events triggered by the ViewModel.
      */
     sealed interface Event {
-        // Example: Navigate to log details if needed
-        // data class NavigateToLogDetail(val logId: Long) : Event
         data class ShowErrorSnackbar(val message: String) : Event
     }
 
@@ -41,7 +42,7 @@ interface ParameterHistoryContract {
      * Represents user actions or intentions on the UI.
      */
     sealed interface Intent {
-        data class SelectFilterType(val type: ParameterType) : Intent
-        // Add other intents like DeleteLog if needed
+        // TODO: Add intents for changing time range, etc.
+        // object LoadData : Intent // Could be used if manual refresh is needed
     }
 } 

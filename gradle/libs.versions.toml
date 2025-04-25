@@ -8,6 +8,7 @@
     firebaseCrashlyticsGradle = "2.9.9"
     workmanager = "2.9.0"
     hiltWork = "1.1.0-alpha01"
+    gson = "2.10.1"
 
     # AndroidX
     androidxCore = "1.13.1"
@@ -97,6 +98,9 @@
     # Vico Charting Library
     vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
     vico-core = { group = "com.patrykandpatrick.vico", name = "core", version.ref = "vico" }
+
+    # Gson (JSON Parsing)
+    gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
     [plugins]
     androidApplication = { id = "com.android.application", version.ref = "androidGradlePlugin" }

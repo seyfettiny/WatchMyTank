@@ -1,12 +1,13 @@
 package com.syfttny.watchmytank.feature_parameters.ui.chart
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.FloatEntry
+import com.syfttny.watchmytank.domain.model.ParameterLog
 import com.syfttny.watchmytank.domain.model.ParameterType
-import com.syfttny.watchmytank.domain.model.WaterParameterLog
-import com.syfttny.watchmytank.domain.use_case.GetParameterHistoryUseCase
+import com.syfttny.watchmytank.domain.use_case.GetParameterLogSetsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -18,8 +19,12 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ParameterChartViewModel @Inject constructor(
-    private val getParameterHistoryUseCase: GetParameterHistoryUseCase
+    private val getParameterLogSetsUseCase: GetParameterLogSetsUseCase,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    private val tankId: String = savedStateHandle.get<String>("tankId")
+        ?: throw IllegalStateException("tankId not found in navigation arguments for ParameterChart")
 
     private val _state = MutableStateFlow(ParameterChartContract.State())
     val state = _state.asStateFlow()
@@ -29,70 +34,78 @@ class ParameterChartViewModel @Inject constructor(
 
     private val chartEntryModelProducer = ChartEntryModelProducer()
 
-    // Trigger to reload data when the selected type changes
-    private val selectedTypeFlow = MutableStateFlow(_state.value.selectedType)
+    private var fullParameterHistory: List<ParameterLog> = emptyList()
 
     init {
-        _state.update { it.copy(chartModelProducer = chartEntryModelProducer) } // Assign producer to state
+        _state.update { it.copy(chartModelProducer = chartEntryModelProducer) }
+        loadFullHistoryForTank()
 
-        // Observe the selected type and load data whenever it changes
-        selectedTypeFlow
-            .flatMapLatest { type -> loadHistoryAndPrepareChart(type) }
-            .launchIn(viewModelScope)
+        viewModelScope.launch {
+            state.map { it.selectedType }.distinctUntilChanged().collect { type ->
+                updateChartEntries(fullParameterHistory, type)
+            }
+        }
     }
 
     fun handleIntent(intent: ParameterChartContract.Intent) {
         when (intent) {
             is ParameterChartContract.Intent.SelectParameterType -> {
                 if (_state.value.selectedType != intent.type) {
-                    _state.update { it.copy(selectedType = intent.type, isLoading = true, error = null, isEmpty = false) }
-                    selectedTypeFlow.value = intent.type
+                    _state.update { it.copy(selectedType = intent.type, error = null) }
                 }
             }
         }
     }
 
-    private fun loadHistoryAndPrepareChart(type: ParameterType): Flow<Unit> {
-        return getParameterHistoryUseCase(type)
-            .map { logs -> mapLogsToChartEntries(logs.reversed()) } // Reverse logs for chronological order on chart
-            .onEach { entries ->
-                val isEmpty = entries.isEmpty()
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        error = null,
-                        isEmpty = isEmpty
-                    )
+    private fun loadFullHistoryForTank() {
+        _state.update { it.copy(isLoading = true) }
+        viewModelScope.launch {
+            getParameterLogSetsUseCase(tankId)
+                .catch { throwable ->
+                    fullParameterHistory = emptyList()
+                    updateChartEntries(fullParameterHistory, _state.value.selectedType)
+                    handleLoadError(throwable, _state.value.selectedType)
                 }
-                // Update the chart producer with the new entries
-                chartEntryModelProducer.setEntries(entries)
-            }
-            .catch { throwable ->
-                handleLoadError(throwable, type)
-            }
-            .map { Unit } // Map to Flow<Unit> for flatMapLatest
+                .collect { logs ->
+                    fullParameterHistory = logs.reversed()
+                    _state.update { it.copy(isLoading = false, error = null) }
+                    updateChartEntries(fullParameterHistory, _state.value.selectedType)
+                }
+        }
     }
 
-    private fun mapLogsToChartEntries(logs: List<WaterParameterLog>): List<FloatEntry> {
-        // Using epoch seconds as X value. Alternatively, use simple index (0, 1, 2...). Axis formatters can handle labels.
-        return logs.map {
-            FloatEntry(
-                x = it.timestamp.toEpochSecond(ZoneOffset.UTC).toFloat(), // X: Timestamp
-                y = it.value.toFloat() // Y: Parameter Value
+    private fun updateChartEntries(logs: List<ParameterLog>, type: ParameterType) {
+        val entries = mapLogsToChartEntries(logs, type)
+        val isEmpty = entries.isEmpty() && logs.isNotEmpty()
+        _state.update {
+            it.copy(
+                isEmpty = isEmpty
             )
+        }
+        chartEntryModelProducer.setEntries(entries)
+    }
+
+    private fun mapLogsToChartEntries(logs: List<ParameterLog>, type: ParameterType): List<FloatEntry> {
+        return logs.mapNotNull { log ->
+            log.parameters[type]?.let { value ->
+                FloatEntry(
+                    x = log.timestamp.toEpochMilli().toFloat(),
+                    y = value.toFloat()
+                )
+            }
         }
     }
 
     private suspend fun handleLoadError(throwable: Throwable, type: ParameterType) {
-        val errorMessage = throwable.localizedMessage ?: "Failed to load chart data for ${type.displayName}"
+        val errorMessage = throwable.localizedMessage ?: "Failed to load chart data for tank $tankId"
         _state.update {
             it.copy(
                 isLoading = false,
                 error = errorMessage,
-                isEmpty = true // Consider empty on error
+                isEmpty = true
             )
         }
-        chartEntryModelProducer.setEntries(emptyList<FloatEntry>()) // Clear chart on error
+        chartEntryModelProducer.setEntries(emptyList<FloatEntry>())
         _eventChannel.send(ParameterChartContract.Event.ShowErrorSnackbar(errorMessage))
     }
 } 
