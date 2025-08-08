@@ -1,0 +1,43 @@
+name: Android CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        variant: [devDebug, prodRelease]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Configure signing for prodRelease
+        if: matrix.variant == 'prodRelease'
+        run: |
+          echo "RELEASE_STORE_FILE=$HOME/release.keystore" >> $GITHUB_ENV
+          echo "$RELEASE_KEYSTORE_BASE64" | base64 -d > $HOME/release.keystore
+          echo "RELEASE_STORE_PASSWORD=$RELEASE_STORE_PASSWORD" >> $GITHUB_ENV
+          echo "RELEASE_KEY_ALIAS=$RELEASE_KEY_ALIAS" >> $GITHUB_ENV
+          echo "RELEASE_KEY_PASSWORD=$RELEASE_KEY_PASSWORD" >> $GITHUB_ENV
+        env:
+          RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+      - name: Lint & Static Analysis
+        run: ./gradlew spotlessCheck detekt
+      - name: Unit Tests & Coverage
+        run: ./gradlew testDebugUnitTest koverXmlReport
+      - name: Assemble ${{ matrix.variant }}
+        run: ./gradlew :app:assemble${{ matrix.variant }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-${{ matrix.variant }}
+          path: app/build/outputs/**

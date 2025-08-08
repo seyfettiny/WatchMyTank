@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.googleKsp)
     alias(libs.plugins.googleServices)
     alias(libs.plugins.firebaseCrashlytics)
+    alias(libs.plugins.secretsGradlePlugin)
 }
 
 android {
@@ -51,9 +52,17 @@ android {
             dimension = "environment"
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
+            resValue("string", "app_name", "WatchMyTank Dev")
+            buildConfigField("String", "ENVIRONMENT", "\"DEV\"")
+            buildConfigField("boolean", "ENABLE_ANALYTICS", "false")
+            buildConfigField("boolean", "ENABLE_CRASHLYTICS", "false")
         }
         create("prod") {
             dimension = "environment"
+            resValue("string", "app_name", "WatchMyTank")
+            buildConfigField("String", "ENVIRONMENT", "\"PROD\"")
+            buildConfigField("boolean", "ENABLE_ANALYTICS", "true")
+            buildConfigField("boolean", "ENABLE_CRASHLYTICS", "true")
         }
     }
 
@@ -65,18 +74,24 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+            val releaseSigning = signingConfigs.getByName("release")
+            if (releaseSigning.storeFile != null) {
+                signingConfig = releaseSigning
+            }
 
             configure<CrashlyticsExtension> {
                 mappingFileUploadEnabled = true
             }
         }
         debug {
-            applicationIdSuffix = ".debug"
             isDebuggable = true
+            configure<CrashlyticsExtension> {
+                mappingFileUploadEnabled = false
+            }
         }
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     composeOptions {

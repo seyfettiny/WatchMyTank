@@ -6,6 +6,7 @@
     ksp = "1.9.0-1.0.13"
     googleServices = "4.4.1"
     firebaseCrashlyticsGradle = "2.9.9"
+    secretsGradlePlugin = "2.0.1"
     workmanager = "2.9.0"
     hiltWork = "1.1.0-alpha01"
     gson = "2.10.1"
@@ -111,6 +112,7 @@
     jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
     googleServices = { id = "com.google.gms.google-services", version.ref = "googleServices" }
     firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsGradle" }
+    secretsGradlePlugin = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 
     # [bundles]
     # Optional: Define groups of dependencies here if you reuse them often
