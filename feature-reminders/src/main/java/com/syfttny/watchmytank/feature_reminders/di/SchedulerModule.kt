@@ -8,19 +8,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-/**
- * Hilt module for providing scheduler-related dependencies.
- */
 @Module
-@InstallIn(SingletonComponent::class) // Install in SingletonComponent for application-wide scope
+@InstallIn(SingletonComponent::class) 
 abstract class SchedulerModule {
-
-    /**
-     * Binds ReminderSchedulerImpl to the ReminderScheduler interface.
-     * Hilt will provide ReminderSchedulerImpl whenever ReminderScheduler is requested.
-     */
     @Binds
-    @Singleton // Match the scope of the component (SingletonComponent)
+    @Singleton 
     abstract fun bindReminderScheduler(
         reminderSchedulerImpl: ReminderSchedulerImpl
     ): ReminderScheduler

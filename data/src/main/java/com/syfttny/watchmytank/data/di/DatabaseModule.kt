@@ -34,7 +34,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "watchmytank_database"
         )
-        // Add migrations here if needed in the future
+        
         // .addMigrations(MIGRATION_1_2)
         .fallbackToDestructiveMigration() // Use only during development!
         .build()

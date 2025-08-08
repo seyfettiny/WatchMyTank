@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.syfttny.watchmytank.domain.model.Reminder
 import com.syfttny.watchmytank.domain.model.ReminderType
 
-// Helper function to format frequency
+
 @Composable
 private fun formatReminderFrequency(reminder: Reminder): String {
     return when (reminder.type) {
@@ -33,10 +33,10 @@ private fun formatReminderFrequency(reminder: Reminder): String {
             if (days != null && days > 0) {
                 if (days == 1) "Daily" else "Every $days days"
             } else {
-                "Invalid interval" // Should ideally not happen
+                "Invalid interval" 
             }
         }
-        ReminderType.CRON -> reminder.cronExpression ?: "Custom schedule" // Show CRON string or fallback
+        ReminderType.CRON -> reminder.cronExpression ?: "Custom schedule" 
     }
 }
 
@@ -62,11 +62,11 @@ fun ReminderListItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = reminder.name, style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(4.dp))
-                // Use the helper function to display frequency
+                
                 Text(
                     text = formatReminderFrequency(reminder),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant // Use a slightly muted color
+                    color = MaterialTheme.colorScheme.onSurfaceVariant 
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))

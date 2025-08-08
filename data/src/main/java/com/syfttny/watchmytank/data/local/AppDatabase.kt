@@ -24,16 +24,6 @@ import com.syfttny.watchmytank.data.local.entity.ReminderEntity
 @TypeConverters(DatabaseConverters::class)
 abstract class AppDatabase : RoomDatabase() {
 
-    /**
-     * Provides access to the Data Access Object for Reminders.
-     */
     abstract fun reminderDao(): ReminderDao
-
-    /**
-     * Provides access to the Data Access Object for Water Parameters.
-     */
     abstract fun parameterDao(): ParameterDao
-
-    // Add other DAOs here as the app grows
-    // abstract fun waterParameterDao(): WaterParameterDao
 } 

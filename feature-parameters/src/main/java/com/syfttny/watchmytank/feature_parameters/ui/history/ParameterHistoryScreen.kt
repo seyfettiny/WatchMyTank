@@ -30,12 +30,12 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 fun ParameterHistoryScreen(
     viewModel: ParameterHistoryViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onNavigateToLogParameter: () -> Unit // Navigate to NEW log screen
+    onNavigateToLogParameter: () -> Unit 
 ) {
     val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Handle one-off events (like errors)
+    
     LaunchedEffect(viewModel) {
         viewModel.events.collectLatest { event ->
             when (event) {
@@ -57,7 +57,7 @@ fun ParameterHistoryScreen(
                     }
                 },
                 actions = {
-                    // TODO: Add buttons for time range selection (e.g., 7D, 30D, All)
+                    
                 }
             )
         },
@@ -78,7 +78,7 @@ fun ParameterHistoryScreen(
                 state.error != null -> Text("Error loading history: ${state.error}")
                 state.chartDataProducers.isEmpty() && !state.isLoading -> Text("No history data available.")
                 else -> {
-                    // Use LazyColumn to display multiple charts vertically
+                    
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(16.dp),
@@ -87,7 +87,7 @@ fun ParameterHistoryScreen(
                         items(state.availableChartTypes) { paramType ->
                             val producer = state.chartDataProducers[paramType]
                             if (producer != null) {
-                                ParameterChartCard( // Extract chart display to a separate Composable
+                                ParameterChartCard( 
                                     title = "${paramType.displayName} (${paramType.unit})",
                                     producer = producer
                                 )
@@ -115,19 +115,19 @@ private fun ParameterChartCard(
                 chartModelProducer = producer,
                 startAxis = rememberStartAxis(),
                 bottomAxis = rememberBottomAxis(),
-                modifier = Modifier.height(200.dp) // Give the chart a fixed height
+                modifier = Modifier.height(200.dp) 
                 // TODO: Add marker, legends, axis formatters etc. for better UX
             )
         }
     }
 }
 
-// Simplified Preview
+
 @Preview(showBackground = true)
 @Composable
 private fun ParameterHistoryScreenPreview() {
     WatchMyTankTheme {
-        // Simulate an empty state for preview
+        
         Scaffold(
             topBar = { TopAppBar(title = { Text("Parameter Charts") }) },
             floatingActionButton = { FloatingActionButton(onClick = {}) { Icon(Icons.Filled.Add, "") } }

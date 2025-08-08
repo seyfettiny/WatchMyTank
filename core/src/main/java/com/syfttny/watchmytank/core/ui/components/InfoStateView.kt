@@ -27,23 +27,23 @@ import com.syfttny.watchmytank.core.ui.theme.WatchMyTankTheme
 fun InfoStateView(
     message: String,
     modifier: Modifier = Modifier,
-    icon: ImageVector? = Icons.Default.Info, // Default to Info icon
+    icon: ImageVector? = Icons.Default.Info,
     actionLabel: String? = null,
     onActionClick: (() -> Unit)? = null
 ) {
     Column(
         modifier = modifier
-            .fillMaxSize() // Take available space
-            .padding(32.dp), // Add significant padding
+            .fillMaxSize() 
+            .padding(32.dp), 
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center // Center content vertically
+        verticalArrangement = Arrangement.Center 
     ) {
         icon?.let {
             Icon(
                 imageVector = it,
-                contentDescription = null, // Message text provides context
-                modifier = Modifier.size(64.dp), // Make icon larger
-                tint = MaterialTheme.colorScheme.secondary // Use a less prominent color
+                contentDescription = null, 
+                modifier = Modifier.size(64.dp), 
+                tint = MaterialTheme.colorScheme.secondary 
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -51,7 +51,7 @@ fun InfoStateView(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant // Slightly muted text
+            color = MaterialTheme.colorScheme.onSurfaceVariant 
         )
         if (actionLabel != null && onActionClick != null) {
             Spacer(modifier = Modifier.height(24.dp))
@@ -62,7 +62,7 @@ fun InfoStateView(
     }
 }
 
-// Previews
+
 @Preview(showBackground = true, name = "InfoStateView - Basic")
 @Composable
 private fun InfoStateViewPreview() {
@@ -77,7 +77,7 @@ private fun InfoStateViewWithActionPreview() {
     WatchMyTankTheme {
         InfoStateView(
             message = "Failed to load data. Check connection?",
-            icon = Icons.Default.Warning, // Use Warning icon for errors
+            icon = Icons.Default.Warning, 
             actionLabel = "Retry",
             onActionClick = {}
         )

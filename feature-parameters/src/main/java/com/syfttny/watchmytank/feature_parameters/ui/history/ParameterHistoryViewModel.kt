@@ -28,15 +28,15 @@ class ParameterHistoryViewModel @Inject constructor(
     private val _eventChannel = Channel<ParameterHistoryContract.Event>()
     val events: Flow<ParameterHistoryContract.Event> = _eventChannel.receiveAsFlow()
 
-    // Flow for raw data and loading/error state
+    
     private val _logsDataFlow: StateFlow<LogsDataResult> = flow {
         if (currentTankId == "DUMMY_TANK_ID") {
             emit(LogsDataResult.Error("Tank ID not provided."))
             return@flow
         }
-        // Emit loading first
+        
         emit(LogsDataResult.Loading)
-        // Collect logs from the use case
+        
         getParameterLogSetsUseCase(currentTankId)
             .catch { e -> emit(LogsDataResult.Error(e.localizedMessage ?: "Failed to load parameter history")) }
             .collect { logs -> emit(LogsDataResult.Success(logs)) }
@@ -44,20 +44,20 @@ class ParameterHistoryViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = LogsDataResult.Loading // Start in loading state
+        initialValue = LogsDataResult.Loading 
     )
 
-    // StateFlow for the UI state, derived from the data flow
+    
     val state: StateFlow<ParameterHistoryContract.State> = _logsDataFlow.map { result ->
         val isLoading = result is LogsDataResult.Loading
         val error = (result as? LogsDataResult.Error)?.message
         val logs = (result as? LogsDataResult.Success)?.logs ?: emptyList()
 
-        // Process logs into chart data only when successful
+        
         val chartProducers = if (result is LogsDataResult.Success) {
             processLogsForCharts(result.logs)
         } else {
-            // Return empty producers if loading or error, preserving previous ones might be complex here
+            
             emptyMap()
         }
 
@@ -65,20 +65,20 @@ class ParameterHistoryViewModel @Inject constructor(
             isLoading = isLoading,
             error = error,
             chartDataProducers = chartProducers
-            // availableChartTypes remains constant for now
+            
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = ParameterHistoryContract.State() // Initial UI state
+        initialValue = ParameterHistoryContract.State() 
     )
 
-    // Helper function to process logs, now returns the map
+    
     private fun processLogsForCharts(logs: List<ParameterLog>): Map<ParameterType, ChartEntryModelProducer> {
         Log.d("ParameterHistoryVM", "Processing ${logs.size} log sets for charts.")
         val producers = mutableMapOf<ParameterType, ChartEntryModelProducer>()
         val allEntries = mutableMapOf<ParameterType, MutableList<FloatEntry>>()
-        val availableTypes = ParameterHistoryContract.State().availableChartTypes // Get default types
+        val availableTypes = ParameterHistoryContract.State().availableChartTypes 
 
         availableTypes.forEach {
             producers[it] = ChartEntryModelProducer()
@@ -104,15 +104,15 @@ class ParameterHistoryViewModel @Inject constructor(
         return producers
     }
 
-    // Handle error helper (can be used by specific actions if needed, otherwise handled by flow)
+    
     private suspend fun handleError(message: String) {
         Log.e("ParameterHistoryVM", "Error: $message")
-        // Error state is now handled by the state flow mapping
+        
         _eventChannel.send(ParameterHistoryContract.Event.ShowErrorSnackbar(message))
     }
 }
 
-// Sealed class to represent the result of loading logs
+
 private sealed class LogsDataResult {
     object Loading : LogsDataResult()
     data class Success(val logs: List<ParameterLog>) : LogsDataResult()

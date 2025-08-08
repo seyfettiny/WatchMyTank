@@ -10,17 +10,14 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Concrete implementation of [ReminderRepository] that uses Room for local persistence.
- */
-@Singleton // Provided as a singleton by Hilt
+@Singleton 
 class ReminderRepositoryImpl @Inject constructor(
     private val reminderDao: ReminderDao
 ) : ReminderRepository {
 
     override suspend fun insertReminder(reminder: Reminder): Long {
         val entity = reminder.toEntity()
-        // Use insert which handles both insert and update (replace strategy)
+        
         return reminderDao.insertReminder(entity)
     }
 

@@ -13,9 +13,9 @@ class GetAllRemindersUseCaseImpl @Inject constructor(
 ) : GetAllRemindersUseCase {
 
     override operator fun invoke(): Flow<List<Reminder>> {
-        // Directly return the stream from the repository
-        // Sorting/filtering could be added here if needed,
-        // but the repository already provides a sorted stream by default.
+        
+        
+        
         return reminderRepository.getAllRemindersStream()
     }
 } 

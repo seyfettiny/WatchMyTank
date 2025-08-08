@@ -46,7 +46,7 @@ class ReminderWorker @AssistedInject constructor(
         // Permission check is important before IO context
         if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             Log.e(TAG, "POST_NOTIFICATIONS permission not granted. Cannot process reminder $reminderId.")
-            // Fail the work if we cannot notify and reschedule, as it breaks the chain.
+            
             return Result.failure()
         }
 
@@ -56,39 +56,39 @@ class ReminderWorker @AssistedInject constructor(
 
                 if (reminder == null || !reminder.isEnabled) {
                     Log.w(TAG, "Reminder not found or disabled: $reminderId. Stopping chain.")
-                    // Cancel any future work for this ID? Maybe not needed if disabled state is handled on fetch.
-                    return@withContext Result.success() // Success, as the condition is met (no reminder / disabled)
+                    
+                    return@withContext Result.success() 
                 }
 
-                // --- Show Notification --- 
+                
                 Log.i(TAG, "Showing notification for reminder: ${reminder.name} ($reminderId)")
                 notificationHelper.showReminderNotification(reminder)
-                val currentTime = LocalDateTime.now() // Capture current time after notification
+                val currentTime = LocalDateTime.now() 
 
-                // --- Calculate Next Trigger --- 
+                
                 val nextTriggerTime = reminder.calculateNextTriggerTime()
                 if (nextTriggerTime == null) {
                     Log.e(TAG, "Could not calculate next trigger time for reminder ${reminder.id} (type: ${reminder.type}). Stopping chain.")
-                    // Update last triggered time even if we can't reschedule?
+                    
                     reminder.lastTriggeredTime = currentTime
-                    reminderRepository.updateReminder(reminder) // Update last triggered time
-                    return@withContext Result.success() // Success, but stops chain
+                    reminderRepository.updateReminder(reminder) 
+                    return@withContext Result.success() 
                 }
 
-                // --- Update Reminder in DB --- 
+                
                 reminder.lastTriggeredTime = currentTime
                 reminder.nextTriggerTime = nextTriggerTime
                 reminderRepository.updateReminder(reminder)
                 Log.i(TAG, "Updated reminder ${reminder.id}. Next trigger: $nextTriggerTime")
 
-                // --- Reschedule Worker --- 
+                
                 scheduleNextWork(reminder.id, nextTriggerTime)
 
                 Log.i(TAG, "Successfully processed and rescheduled reminder ${reminder.id}")
                 Result.success()
             } catch (e: Exception) {
                 Log.e(TAG, "Error processing reminder $reminderId", e)
-                Result.retry() // Retry on transient errors
+                Result.retry() 
             }
         }
     }
@@ -97,16 +97,16 @@ class ReminderWorker @AssistedInject constructor(
         val now = LocalDateTime.now()
         val delay = Duration.between(now, nextTriggerTime)
 
-        // Ensure delay is non-negative. If nextTriggerTime is in the past, schedule immediately (or log error).
+        
         if (delay.isNegative || delay.isZero) {
             Log.w(TAG, "Calculated next trigger time $nextTriggerTime is in the past for reminder $reminderId. Scheduling immediately, but check logic.")
-            // Optionally schedule with zero delay, or handle as error
+            
         }
 
         val workRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
             .setInitialDelay(delay)
             .setInputData(workDataOf(KEY_REMINDER_ID to reminderId))
-            // Tagging work allows cancellation by tag if needed
+            
             .addTag("reminder_work_$reminderId") 
             .build()
 

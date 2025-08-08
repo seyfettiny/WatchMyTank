@@ -1,11 +1,7 @@
 package com.syfttny.watchmytank.di
 
-// Add back imports for LogParameterUseCase
 import com.syfttny.watchmytank.domain.use_case.LogParameterUseCase
 import com.syfttny.watchmytank.domain.use_case.LogParameterUseCaseImpl
-// Remove unused imports for old parameter use cases
-// import com.syfttny.watchmytank.domain.use_case.GetParameterHistoryUseCase
-// import com.syfttny.watchmytank.domain.use_case.GetParameterHistoryUseCaseImpl
 
 // Reminder Use Cases
 import com.syfttny.watchmytank.domain.use_case.AddReminderUseCase
@@ -31,16 +27,6 @@ abstract class DomainModule {
 
     // --- Parameter Use Cases ---
 
-    // Removed binding for GetParameterHistoryUseCase
-    /*
-    @Binds
-    @Singleton // Scope binding if necessary
-    abstract fun bindGetParameterHistoryUseCase(
-        impl: GetParameterHistoryUseCaseImpl // Provide the implementation
-    ): GetParameterHistoryUseCase // Return the interface
-    */
-
-    // Add back binding for LogParameterUseCase
     @Binds
     @Singleton
     abstract fun bindLogParameterUseCase(

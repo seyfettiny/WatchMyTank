@@ -14,10 +14,10 @@ import java.time.ZoneOffset
  */
 class DatabaseConverters {
 
-    private val gson = Gson() // Gson instance for JSON conversion
+    private val gson = Gson() 
 
-    // LocalDateTime Converters
-    // Room doesn't natively support LocalDateTime, so we convert to/from Long (epoch seconds)
+    
+    
 
     @TypeConverter
     fun fromTimestamp(value: Long?): LocalDateTime? {
@@ -29,8 +29,8 @@ class DatabaseConverters {
         return date?.toEpochSecond(ZoneOffset.UTC)
     }
 
-    // ReminderType Converters
-    // Convert the enum to/from its String representation (safer than using ordinal)
+    
+    
 
     @TypeConverter
     fun fromReminderType(value: String?): ReminderType? {
@@ -42,7 +42,7 @@ class DatabaseConverters {
         return type?.name
     }
 
-    // ParameterType Converters
+    
     @TypeConverter
     fun fromParameterType(value: String?): ParameterType? {
         return value?.let { enumName ->
@@ -59,7 +59,7 @@ class DatabaseConverters {
         return type?.name
     }
 
-    // Parameter Map Converters (for Map<ParameterType, Double>)
+    
     @TypeConverter
     fun fromParameterMap(map: Map<ParameterType, Double>?): String? {
         return map?.let { gson.toJson(it) }
@@ -73,7 +73,7 @@ class DatabaseConverters {
         }
     }
 
-    // Instant Converter (as used in ParameterLogEntity)
+    
     @TypeConverter
     fun instantToLong(instant: Instant?): Long? {
         return instant?.toEpochMilli()

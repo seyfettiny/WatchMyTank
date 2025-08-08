@@ -32,50 +32,31 @@ data class Reminder(
     val isEnabled: Boolean = true,
     var lastTriggeredTime: LocalDateTime? = null
 ) {
-    /**
-     * Calculates the next trigger time based on the current trigger time and reminder type.
-     * Returns null if the type is unsupported or data is invalid (e.g., null frequencyDays for EVERY_N_DAYS).
-     */
     fun calculateNextTriggerTime(currentTriggerTime: LocalDateTime = this.nextTriggerTime): LocalDateTime? {
         return when (type) {
             ReminderType.DAILY -> {
-                // Add one day to the current trigger time
+                
                 currentTriggerTime.plusDays(1)
             }
             ReminderType.EVERY_N_DAYS -> {
-                // Add 'frequencyDays' to the current trigger time
+                
                 frequencyDays?.let { days ->
                     if (days > 0) {
                         currentTriggerTime.plusDays(days.toLong())
                     } else {
-                        null // Invalid frequency
+                        null 
                     }
-                } ?: null // frequencyDays should not be null for this type
+                } ?: null 
             }
             ReminderType.CRON -> {
-                // TODO: Implement CRON parsing logic.
-                // This likely requires a third-party CRON library.
-                // For now, return null or handle as an error/unsupported.
-                // Example: Use a library like 'com.cronutils:cron-utils'
-                // val definition = CronDefinitionBuilder.instanceDefinitionFor(CronType.UNIX)
-                // val parser = CronParser(definition)
-                // val executionTime = ExecutionTime.forCron(parser.parse(cronExpression))
-                // val nextExecution = executionTime.nextExecution(ZonedDateTime.of(currentTriggerTime, ZoneId.systemDefault()))
-                // nextExecution.map { it.toLocalDateTime() }.orElse(null)
                 null // Placeholder
             }
         }
     }
 }
 
-/**
- * Defines the possible frequency types for a reminder.
- */
 enum class ReminderType {
-    /** Reminder triggers every day at a specific time (handled by scheduling logic). */
     DAILY,
-    /** Reminder triggers every N days. */
     EVERY_N_DAYS,
-    /** Reminder triggers based on a specific CRON expression for complex schedules. */
     CRON
 } 

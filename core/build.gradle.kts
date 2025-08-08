@@ -7,7 +7,6 @@ android {
     namespace = "com.syfttny.watchmytank.core"
     compileSdk = 34
 
-    // Add flavor dimension awareness
     flavorDimensions += "environment"
 
     defaultConfig {
@@ -57,7 +56,6 @@ dependencies {
 
     // DI - Hilt
     implementation(libs.hilt.android)
-    // kapt(libs.hilt.compiler) // Annotation processor dependency - Added in root build.gradle.kts? Check this.
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

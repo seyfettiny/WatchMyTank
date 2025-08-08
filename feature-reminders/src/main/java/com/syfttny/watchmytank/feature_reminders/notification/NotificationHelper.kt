@@ -16,7 +16,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.syfttny.watchmytank.domain.model.Reminder
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import com.syfttny.watchmytank.core.R as coreR // Import core R class
+import com.syfttny.watchmytank.core.R as coreR 
 
 class NotificationHelper @Inject constructor(
     @ApplicationContext private val context: Context
@@ -76,7 +76,7 @@ class NotificationHelper @Inject constructor(
                     PendingIntent.FLAG_UPDATE_CURRENT
                 }
 
-            // Use reminder.id as the request code for PendingIntent uniqueness per reminder
+            
             val pendingIntent: PendingIntent = PendingIntent.getActivity(
                 context,
                 reminder.id.toInt(),
@@ -86,15 +86,15 @@ class NotificationHelper @Inject constructor(
             // --- End Deep Link Intent Setup --- //
 
             val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(coreR.drawable.ic_launcher_foreground) // Use icon from core
-                .setContentTitle("Aquarium Reminder") // Consider using reminder.name here?
+                .setSmallIcon(coreR.drawable.ic_launcher_foreground) 
+                .setContentTitle("Aquarium Reminder") 
                 .setContentText("It's time for: ${reminder.name}")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent) // Set the PendingIntent to handle tap
-                .setAutoCancel(true) // Dismiss notification when tapped
+                .setContentIntent(pendingIntent) 
+                .setAutoCancel(true) 
 
-            // notificationId is unique for each notification. Using reminder.id ensures
-            // we can update or cancel it later if needed. Cast to Int.
+            
+            
             val notificationId = reminder.id.toInt()
 
             // Check for POST_NOTIFICATIONS permission before notifying (target S+)

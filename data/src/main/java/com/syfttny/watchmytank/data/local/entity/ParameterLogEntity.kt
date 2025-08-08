@@ -3,9 +3,9 @@ package com.syfttny.watchmytank.data.local.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-// No specific converter imports needed here if handled globally by @TypeConverters on AppDatabase
-// import com.syfttny.watchmytank.data.local.converter.InstantConverter 
-// import com.syfttny.watchmytank.data.local.converter.ParameterMapConverter 
+
+
+
 import java.time.Instant
 
 /**
@@ -19,14 +19,14 @@ import java.time.Instant
  * @param notes Optional user notes.
  * @param isSynced Flag indicating if this log set has been synced with the remote backend.
  */
-@Entity(tableName = "parameter_log_sets") // Use a descriptive table name
+@Entity(tableName = "parameter_log_sets") 
 data class ParameterLogEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    @ColumnInfo(index = true) // Index for faster lookups by tank
+    @ColumnInfo(index = true) 
     val tankId: String,
     val userId: String,
     val timestamp: Instant,
-    val parametersJson: String, // Store the map as JSON
+    val parametersJson: String, 
     val notes: String?,
-    val isSynced: Boolean = false // Default to not synced when created locally
+    val isSynced: Boolean = false 
 ) 

@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.jetbrainsKotlinJvm) // Use kotlin("jvm") instead of kotlin("android")
+    alias(libs.plugins.jetbrainsKotlinJvm) 
 }
 
 kotlin {

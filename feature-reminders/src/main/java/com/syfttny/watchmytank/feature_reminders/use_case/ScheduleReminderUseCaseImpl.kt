@@ -26,28 +26,28 @@ class ScheduleReminderUseCaseImpl @Inject constructor(
 
     override suspend operator fun invoke(reminder: Reminder) {
         if (!reminder.isEnabled) {
-            // If the reminder is disabled, cancel any existing work for it
+            
             cancel(reminder.id)
             return
         }
 
         val now = LocalDateTime.now(ZoneOffset.UTC)
-        // Make sure reminder.nextTriggerTime is not null
+        
         val nextTrigger = reminder.nextTriggerTime ?: run {
-            // Handle null nextTriggerTime: maybe log error, or don't schedule
-            // For now, let's log and return, as scheduling is impossible.
+            
+            
             println("Error: Cannot schedule reminder ${reminder.id} with null nextTriggerTime")
-            cancel(reminder.id) // Cancel any potentially existing work
+            cancel(reminder.id) 
             return
         }
         val initialDelay = Duration.between(now, nextTrigger)
 
-        // Ensure delay is not negative (i.e., reminder time is in the future)
+        
         if (initialDelay.isNegative || initialDelay.isZero) {
-            // Handle case where next trigger time is in the past or now.
-            // Options: Trigger immediately, log error, or calculate next valid time?
-            // For now, let's schedule it with a minimal delay (e.g., 1 second) to trigger ASAP.
-            // A more robust solution would calculate the *next* valid trigger time based on frequency.
+            
+            
+            
+            
             // TODO: Implement proper calculation for past-due trigger times
             println("Warning: Scheduling reminder ${reminder.id} for immediate trigger (nextTriggerTime was in the past)")
             scheduleWork(reminder.id, Duration.ofSeconds(1))
@@ -76,14 +76,14 @@ class ScheduleReminderUseCaseImpl @Inject constructor(
             .setInitialDelay(initialDelay)
             .setInputData(inputData)
             .setConstraints(constraints)
-            .addTag(createWorkTag(reminderId)) // Use tag for cancellation
+            .addTag(createWorkTag(reminderId)) 
             .build()
 
-        // Use unique work to prevent duplicates if scheduled multiple times
-        // REPLACE existing work if a reminder is updated with a new time
+        
+        
         workManager.enqueueUniqueWork(
-            createWorkTag(reminderId), // Unique work name based on ID
-            ExistingWorkPolicy.REPLACE, // Replace existing work for this reminder
+            createWorkTag(reminderId), 
+            ExistingWorkPolicy.REPLACE, 
             workRequest
         )
         println("Scheduled work for reminder ID: $reminderId with delay: $initialDelay (tag: ${createWorkTag(reminderId)})")

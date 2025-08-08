@@ -21,14 +21,14 @@ import javax.inject.Inject
 class ReminderListViewModel @Inject constructor(
     private val getAllRemindersUseCase: GetAllRemindersUseCase,
     private val deleteReminderUseCase: DeleteReminderUseCase
-    // Inject other use cases like GetReminderByIdUseCase, SaveReminderUseCase later if needed for undo
+    
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ReminderListContract.State())
     val state: StateFlow<ReminderListContract.State> = _state.asStateFlow()
 
     private val _eventChannel = Channel<ReminderListContract.Event>()
-    val events = _eventChannel.receiveAsFlow() // UI collects this for one-off events
+    val events = _eventChannel.receiveAsFlow() 
 
     init {
         handleIntent(ReminderListContract.Intent.LoadReminders)
@@ -39,12 +39,12 @@ class ReminderListViewModel @Inject constructor(
             is ReminderListContract.Intent.LoadReminders -> loadReminders()
             is ReminderListContract.Intent.DeleteReminder -> deleteReminder(intent.reminderId)
             is ReminderListContract.Intent.EditReminder -> navigateToEdit(intent.reminderId)
-            is ReminderListContract.Intent.AddReminder -> navigateToEdit(null) // null ID signifies creation
+            is ReminderListContract.Intent.AddReminder -> navigateToEdit(null) 
         }
     }
 
     private fun loadReminders() {
-        _state.update { it.copy(isLoading = true) } // Show loading indicator
+        _state.update { it.copy(isLoading = true) } 
 
         getAllRemindersUseCase()
             .onEach { reminders ->
@@ -52,7 +52,7 @@ class ReminderListViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         reminders = reminders,
-                        error = null // Clear previous error on success
+                        error = null 
                     )
                 }
             }
@@ -65,7 +65,7 @@ class ReminderListViewModel @Inject constructor(
                 }
                 _eventChannel.send(ReminderListContract.Event.ShowErrorSnackbar(throwable.localizedMessage ?: "Failed to load reminders"))
             }
-            .launchIn(viewModelScope) // Collect the flow within the ViewModel's scope
+            .launchIn(viewModelScope) 
     }
 
     private fun deleteReminder(reminderId: Long) {

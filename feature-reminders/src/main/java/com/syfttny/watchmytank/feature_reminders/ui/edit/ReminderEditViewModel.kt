@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReminderEditViewModel @Inject constructor(
-    // Inject the use cases
+    
     private val getReminderUseCase: GetReminderUseCase,
     private val addReminderUseCase: AddReminderUseCase,
     private val updateReminderUseCase: UpdateReminderUseCase,
@@ -40,7 +40,7 @@ class ReminderEditViewModel @Inject constructor(
             is ReminderEditContract.Intent.UpdateName -> _state.update { it.copy(name = intent.name, error = null) }
             is ReminderEditContract.Intent.SelectType -> _state.update { it.copy(type = intent.type, error = null) }
             is ReminderEditContract.Intent.UpdateFrequencyDays -> {
-                // Allow only digits, update state
+                
                 val digitsOnly = intent.days.filter { it.isDigit() }
                 _state.update { it.copy(frequencyDays = digitsOnly, error = null) }
             }
@@ -49,14 +49,14 @@ class ReminderEditViewModel @Inject constructor(
             is ReminderEditContract.Intent.UpdateEnabled -> {
                 val isEnabled = intent.enabled
                 _state.update { it.copy(isEnabled = isEnabled) }
-                // If disabling an existing reminder, cancel its scheduled work immediately
+                
                 val reminderId = _state.value.reminderId
                 if (!isEnabled && reminderId != null && reminderId > 0) {
-                    viewModelScope.launch { // Launch coroutine for suspend fun
+                    viewModelScope.launch { 
                         reminderScheduler.cancel(reminderId)
                     }
                 }
-                // Note: If re-enabled, scheduling happens only upon *saving*
+                
             }
             is ReminderEditContract.Intent.UpdateTime -> {
                 _state.update { it.copy(triggerHour = intent.hour, triggerMinute = intent.minute, error = null) }
@@ -66,7 +66,7 @@ class ReminderEditViewModel @Inject constructor(
 
     private fun loadReminder(reminderId: Long?) {
         if (reminderId == null || reminderId <= 0) {
-            // Creating a new reminder
+            
             _state.update { ReminderEditContract.State(isEditing = false) }
             return
         }
@@ -75,11 +75,11 @@ class ReminderEditViewModel @Inject constructor(
         viewModelScope.launch {
             // TODO: Implement loading logic using GetReminderUseCase
             try {
-                // Ensure reminderId is not null/invalid before fetching
+                
                 if (reminderId == null || reminderId <= 0) {
                      _state.update { it.copy(isLoading = false, error = "Invalid Reminder ID for loading") }
                     _eventChannel.send(ReminderEditContract.Event.ShowError("Invalid Reminder ID"))
-                    return@launch // Exit if ID is invalid
+                    return@launch 
                 }
 
                 val reminder = getReminderUseCase(reminderId)
@@ -102,11 +102,11 @@ class ReminderEditViewModel @Inject constructor(
                 } else {
                     _state.update { it.copy(isLoading = false, error = "Reminder not found") }
                     _eventChannel.send(ReminderEditContract.Event.ShowError("Reminder not found"))
-                    // Optionally navigate back if reminder not found
-                    // _eventChannel.send(ReminderEditContract.Event.NavigateBack)
+                    
+                    
                 }
             } catch (e: Exception) {
-                Log.e("ReminderEditViewModel", "Error loading reminder", e) // Log the exception
+                Log.e("ReminderEditViewModel", "Error loading reminder", e) 
                 _state.update { it.copy(isLoading = false, error = e.message ?: "Failed to load reminder") }
                 _eventChannel.send(ReminderEditContract.Event.ShowError(e.message ?: "Failed to load reminder"))
             }
@@ -116,7 +116,7 @@ class ReminderEditViewModel @Inject constructor(
     private fun saveReminder() {
         val currentState = _state.value
 
-        // Basic Validation
+        
         if (currentState.name.isBlank()) {
             _state.update { it.copy(error = "Name cannot be empty") }
             return
@@ -137,9 +137,9 @@ class ReminderEditViewModel @Inject constructor(
         viewModelScope.launch {
             // TODO: Use AddReminderUseCase or UpdateReminderUseCase based on isEditing
             try {
-                var savedReminder: Reminder? = null // Variable to hold the saved/updated reminder
+                var savedReminder: Reminder? = null 
 
-                // Create the object to save (nextTriggerTime is still temporary here)
+                
                 val reminderToSave = Reminder(
                     id = currentState.reminderId ?: 0,
                     name = currentState.name.trim(),
@@ -156,32 +156,32 @@ class ReminderEditViewModel @Inject constructor(
                 )
 
                 if (currentState.reminderId != null && currentState.reminderId > 0) {
-                    // UPDATE case
-                    updateReminderUseCase(reminderToSave) // Assume this runs successfully
-                    // The ID is known, and data is from the reminderToSave object
+                    
+                    updateReminderUseCase(reminderToSave) 
+                    
                     savedReminder = reminderToSave
                 } else {
-                    // ADD case
-                    // Assume addReminderUseCase returns the newly generated ID (Long)
+                    
+                    
                     val newId = addReminderUseCase(reminderToSave.copy(id = 0))
-                    // If addReminderUseCase returns Unit, this approach fails.
-                    // We'd need to fetch the reminder by name/time (unreliable) or modify the use case.
-                    if (newId > 0) { // Check if a valid ID was returned/generated
-                        savedReminder = reminderToSave.copy(id = newId) // Create object with the new ID
+                    
+                    
+                    if (newId > 0) { 
+                        savedReminder = reminderToSave.copy(id = newId) 
                     } else {
                         Log.e("ReminderEditViewModel", "Failed to get valid ID after adding reminder.")
-                        // Handle error appropriately - maybe show message?
+                        
                     }
                 }
 
-                // Schedule the work only if save/update was successful and we have a reminder object
+                
                 if (savedReminder != null) {
-                    // Schedule using the potentially updated reminder object
-                    // The schedule function will calculate the correct initial trigger time
+                    
+                    
                     reminderScheduler.schedule(savedReminder)
                 } else {
                     Log.e("ReminderEditViewModel", "Scheduling skipped because savedReminder object is null.")
-                    // Show error?
+                    
                 }
 
                 _state.update { it.copy(isLoading = false) }

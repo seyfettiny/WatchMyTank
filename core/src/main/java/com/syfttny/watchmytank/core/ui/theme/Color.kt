@@ -2,16 +2,16 @@ package com.syfttny.watchmytank.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Light Theme Colors - Aquatic Hues
-val PrimaryLight = Color(0xFF006970) // Teal
+
+val PrimaryLight = Color(0xFF006970) 
 val OnPrimaryLight = Color(0xFFFFFFFF)
 val PrimaryContainerLight = Color(0xFF70F7FF)
 val OnPrimaryContainerLight = Color(0xFF002022)
-val SecondaryLight = Color(0xFF4A6365) // Soft Blue-Gray
+val SecondaryLight = Color(0xFF4A6365) 
 val OnSecondaryLight = Color(0xFFFFFFFF)
 val SecondaryContainerLight = Color(0xFFCCE8EA)
 val OnSecondaryContainerLight = Color(0xFF041F21)
-val TertiaryLight = Color(0xFFFF8A65) // Coral Accent
+val TertiaryLight = Color(0xFFFF8A65) 
 val OnTertiaryLight = Color(0xFFFFFFFF)
 val TertiaryContainerLight = Color(0xFFFFDBCF)
 val OnTertiaryContainerLight = Color(0xFF3A0A00)
@@ -29,19 +29,17 @@ val OutlineLight = Color(0xFF6F797A)
 val ScrimLight = Color(0xFF000000)
 val InverseSurfaceLight = Color(0xFF2E3131)
 val InverseOnSurfaceLight = Color(0xFFEFF1F1)
-val InversePrimaryLight = Color(0xFF4CDAE0) // Teal variant for inverse
+val InversePrimaryLight = Color(0xFF4CDAE0) 
 
-
-// Dark Theme Colors - Aquatic Hues
-val PrimaryDark = Color(0xFF4CDAE0) // Teal
+val PrimaryDark = Color(0xFF4CDAE0) 
 val OnPrimaryDark = Color(0xFF00373A)
 val PrimaryContainerDark = Color(0xFF004F54)
 val OnPrimaryContainerDark = Color(0xFF70F7FF)
-val SecondaryDark = Color(0xFFB0CCC3) // Soft Blue-Gray
+val SecondaryDark = Color(0xFFB0CCC3) 
 val OnSecondaryDark = Color(0xFF1B3437)
 val SecondaryContainerDark = Color(0xFF324B4D)
 val OnSecondaryContainerDark = Color(0xFFCCE8EA)
-val TertiaryDark = Color(0xFFFFB59C) // Coral Accent
+val TertiaryDark = Color(0xFFFFB59C) 
 val OnTertiaryDark = Color(0xFF5F1700)
 val TertiaryContainerDark = Color(0xFF843000)
 val OnTertiaryContainerDark = Color(0xFFFFDBCF)
@@ -59,4 +57,4 @@ val OutlineDark = Color(0xFF899394)
 val ScrimDark = Color(0xFF000000)
 val InverseSurfaceDark = Color(0xFFE1E3E3)
 val InverseOnSurfaceDark = Color(0xFF191C1D)
-val InversePrimaryDark = Color(0xFF006970) // Teal variant for inverse 
+val InversePrimaryDark = Color(0xFF006970) 

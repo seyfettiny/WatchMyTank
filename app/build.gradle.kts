@@ -15,7 +15,6 @@ android {
 
     signingConfigs {
         create("release") {
-            // Read credentials from ~/.gradle/gradle.properties or environment variables
             val storeFilePath = System.getenv("RELEASE_STORE_FILE") ?: project.findProperty("RELEASE_STORE_FILE") as? String
             val storePassword = System.getenv("RELEASE_STORE_PASSWORD") ?: project.findProperty("RELEASE_STORE_PASSWORD") as? String
             val keyAlias = System.getenv("RELEASE_KEY_ALIAS") ?: project.findProperty("RELEASE_KEY_ALIAS") as? String

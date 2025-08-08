@@ -22,10 +22,10 @@ interface ParameterLogContract {
      */
     data class State(
         val availableTypes: List<ParameterType> = ParameterType.values().toList(),
-        val selectedType: ParameterType = availableTypes.first(), // Default to the first type
+        val selectedType: ParameterType = availableTypes.first(), 
         val currentValue: String = "",
         val currentNotes: String = "",
-        val selectedTimestamp: LocalDateTime = LocalDateTime.now(), // Consider making this user-editable
+        val selectedTimestamp: LocalDateTime = LocalDateTime.now(), 
         val isLoading: Boolean = false,
         val error: String? = null
     )
@@ -35,7 +35,7 @@ interface ParameterLogContract {
      */
     sealed interface Event {
         data class ShowSnackbar(val message: String) : Event
-        object NavigateBack : Event // Or NavigateToHistory, depending on flow
+        object NavigateBack : Event 
     }
 
     /**
@@ -45,7 +45,7 @@ interface ParameterLogContract {
         data class SelectParameterType(val type: ParameterType) : Intent
         data class UpdateValue(val value: String) : Intent
         data class UpdateNotes(val notes: String) : Intent
-        // data class UpdateTimestamp(val timestamp: LocalDateTime) : Intent // If timestamp is editable
+        
         object SaveLog : Intent
     }
 } 

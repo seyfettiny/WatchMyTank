@@ -17,9 +17,7 @@ class WatchMyTankApplication : Application(), Configuration.Provider {
             .setWorkerFactory(workerFactory)
             .build()
 
-    // Application-level setup can go here if needed later
     override fun onCreate() {
         super.onCreate()
-        // Initialize other app-wide components if necessary
     }
 } 

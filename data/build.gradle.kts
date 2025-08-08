@@ -32,11 +32,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-    }
-    // Enable build features if needed (e.g., buildConfig)
-    // buildFeatures {
-    //     buildConfig = true
-    // }
+    }    
 }
 
 dependencies {

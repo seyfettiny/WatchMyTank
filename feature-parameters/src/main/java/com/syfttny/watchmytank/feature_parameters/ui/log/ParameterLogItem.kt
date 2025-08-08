@@ -26,11 +26,11 @@ import com.syfttny.watchmytank.domain.model.ParameterType
 fun ParameterLogItem(
     parameterType: ParameterType,
     rangeDefinition: ParameterRangeDefinition,
-    valueString: String, // Current text input value
+    valueString: String, 
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Attempt to parse the input string to a Double for the range bar
+    
     val currentValueDouble by remember(valueString) {
         derivedStateOf { valueString.toDoubleOrNull() }
     }
@@ -54,7 +54,7 @@ fun ParameterLogItem(
                 OutlinedTextField(
                     value = valueString,
                     onValueChange = onValueChange,
-                    modifier = Modifier.weight(1f), // Takes up available space
+                    modifier = Modifier.weight(1f), 
                     label = { Text("Value") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true
@@ -64,7 +64,7 @@ fun ParameterLogItem(
                     Text(
                         text = parameterType.unit,
                         style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(start = 4.dp, end = 4.dp) // Add some padding
+                        modifier = Modifier.padding(start = 4.dp, end = 4.dp) 
                     )
                 }
             }
@@ -73,7 +73,7 @@ fun ParameterLogItem(
 
             ParameterRangeBar(
                 rangeDefinition = rangeDefinition,
-                currentValue = currentValueDouble // Pass the parsed Double
+                currentValue = currentValueDouble 
             )
         }
     }

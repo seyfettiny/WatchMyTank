@@ -64,10 +64,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
-    // Charting Library (Placeholder - choose one)
-    // implementation("com.github.PhilJay:MPAndroidChart:vX.X.X") // MPAndroidChart (requires Compose wrapper or AndroidView)
-    // implementation("...") // Or a Compose-native charting library like Compose-Charts
-
     // DI - Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

@@ -27,7 +27,7 @@ class ParameterRepositoryImpl @Inject constructor(
     private val workManager = WorkManager.getInstance(context)
 
     private fun enqueueSyncWorker() {
-        // Enqueue the NEW worker for syncing ParameterLogEntity sets.
+        
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
@@ -53,28 +53,8 @@ class ParameterRepositoryImpl @Inject constructor(
         return parameterDao.getParameterLogSetsForTank(tankId)
             .map { entityList ->
                 entityList.map { entity ->
-                    entity.toDomainModel() // Use the mapper function from ParameterLogMapper
+                    entity.toDomainModel() 
                 }
             }
     }
-
-    // REMOVE outdated methods that overrode methods from the old interface
-    /*
-    override suspend fun logParameter(log: WaterParameterLog) {
-        // ... old implementation ...
-        // parameterDao.insertLog(entity) // Unresolved reference
-    }
-    */
-
-    /*
-    override fun getParameterHistory(parameterType: ParameterType): Flow<List<WaterParameterLog>> {
-       // ... old implementation ...
-    }
-    */
-
-    /*
-    override fun getUnsyncedLogCount(): Flow<Int> {
-        // ... old implementation ...
-    }
-    */
 } 

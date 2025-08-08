@@ -13,9 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
-import com.syfttny.watchmytank.core.ui.theme.WatchMyTankTheme // Assuming theme is here
+import com.syfttny.watchmytank.core.ui.theme.WatchMyTankTheme
 
-// Hardcoded Tank ID for now - Replace with actual logic later
 private const val HARDCODED_TANK_ID = "default_tank"
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,7 +48,6 @@ fun DashboardScreen(
                 icon = Icons.Default.Info,
                 onClick = { onNavigateToParameters(HARDCODED_TANK_ID) }
             )
-            // TODO: Add multi-tank support and pass the correct tankId
         }
     }
 }
@@ -97,5 +95,3 @@ private fun DashboardButtonPreview() {
         )
     }
 }
-
-// TODO: Add Preview for DashboardScreen 

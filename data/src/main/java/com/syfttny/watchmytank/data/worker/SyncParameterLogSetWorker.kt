@@ -22,7 +22,7 @@ class SyncParameterLogSetWorker @AssistedInject constructor(
 
     companion object {
         private const val TAG = "SyncParameterLogSetWorker"
-        // Use a different collection name or structure if desired for sets
+        
         private const val FIRESTORE_COLLECTION = "parameter_log_sets"
     }
 
@@ -40,14 +40,14 @@ class SyncParameterLogSetWorker @AssistedInject constructor(
 
             val collectionRef = firestore.collection(FIRESTORE_COLLECTION)
 
-            // Consider using Batched Writes for efficiency if uploading many sets
+            
             for (entity in unsyncedLogSets) {
-                val logSetDto = entity.toDto() // Use the mapper to DTO
+                val logSetDto = entity.toDto() 
                 try {
-                    // Upload DTO to Firestore. Firestore handles the serialization.
+                    
                     collectionRef.add(logSetDto).await()
 
-                    // Mark as synced locally ONLY after successful upload
+                    
                     parameterDao.markLogSetAsSynced(entity.id)
                     Log.d(TAG, "Successfully synced log set ID: ${entity.id}")
 
@@ -57,8 +57,8 @@ class SyncParameterLogSetWorker @AssistedInject constructor(
                         "Error syncing log set ID: ${entity.id} to Firestore. Error: ${e.message}",
                         e
                     )
-                    // Retry on network errors or specific Firestore exceptions
-                    // For simplicity, retry on any exception during upload loop
+                    
+                    
                     return Result.retry()
                 }
             }
@@ -68,7 +68,7 @@ class SyncParameterLogSetWorker @AssistedInject constructor(
 
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching unsynced log sets from DAO: ${e.message}", e)
-            // If we can't even read from the DB, it's likely a non-retryable issue
+            
             return Result.failure()
         }
     }

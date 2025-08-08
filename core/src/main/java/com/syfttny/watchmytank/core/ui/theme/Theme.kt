@@ -78,8 +78,8 @@ private val DarkColorScheme = darkColorScheme(
 @Composable
 fun WatchMyTankTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false, // Set to true to enable Material You colors if desired
+    
+    dynamicColor: Boolean = false, 
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

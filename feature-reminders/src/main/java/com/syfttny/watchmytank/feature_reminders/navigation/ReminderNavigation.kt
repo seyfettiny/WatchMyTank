@@ -14,19 +14,19 @@ import com.syfttny.watchmytank.feature_reminders.ui.edit.ReminderEditScreen
 const val REMINDER_GRAPH_ROUTE = "reminder_graph"
 const val REMINDERS_LIST_ROUTE = "reminders_list"
 const val REMINDER_EDIT_ROUTE = "reminder_edit"
-const val REMINDER_ID_ARG = "reminderId" // Argument name
+const val REMINDER_ID_ARG = "reminderId" 
 
-// Optional argument: Use query parameter style ?arg={arg} for optional args
-// Or provide a default value in the route path itself for required args with defaults
-const val REMINDER_EDIT_ROUTE_TEMPLATE = "$REMINDER_EDIT_ROUTE/{$REMINDER_ID_ARG}" // Path template
-const val REMINDER_EDIT_ROUTE_BASE = REMINDER_EDIT_ROUTE // Base route for "add"
 
-// Helper function to create the navigation route string
+
+const val REMINDER_EDIT_ROUTE_TEMPLATE = "$REMINDER_EDIT_ROUTE/{$REMINDER_ID_ARG}" 
+const val REMINDER_EDIT_ROUTE_BASE = REMINDER_EDIT_ROUTE 
+
+
 fun createReminderEditRoute(reminderId: Long?): String {
     return if (reminderId != null && reminderId > 0) {
-        "$REMINDER_EDIT_ROUTE/$reminderId" // Route for editing an existing reminder
+        "$REMINDER_EDIT_ROUTE/$reminderId" 
     } else {
-        "$REMINDER_EDIT_ROUTE/-1" // Route for adding a new reminder (using -1 as default)
+        "$REMINDER_EDIT_ROUTE/-1" 
     }
 }
 
@@ -41,33 +41,33 @@ fun NavGraphBuilder.addReminderGraph(
         composable(route = REMINDERS_LIST_ROUTE) {
             ReminderListScreen(
                 onNavigateToEdit = { reminderId ->
-                    // Use the helper function to create the route
+                    
                     val route = createReminderEditRoute(reminderId)
                     navController.navigate(route)
                 }
-                // Add other necessary parameters for ReminderListScreen if any
-                // e.g., viewModel = hiltViewModel() // Assuming Hilt is set up
+                
+                
             )
         }
 
         composable(
-            route = REMINDER_EDIT_ROUTE_TEMPLATE, // Use the template with the mandatory argument
+            route = REMINDER_EDIT_ROUTE_TEMPLATE, 
             arguments = listOf(
                 navArgument(REMINDER_ID_ARG) {
                     type = NavType.LongType
-                    defaultValue = -1L // Provide a default value for "add" case
-                    // nullable = true // Alternatively, make it nullable if -1L is not desired
+                    defaultValue = -1L 
+                    
                 }
             )
         ) { backStackEntry ->
-            // Extract the reminderId argument (will be -1L if adding new)
-            val reminderId = backStackEntry.arguments?.getLong(REMINDER_ID_ARG) ?: -1L // Use elvis for safety
+            
+            val reminderId = backStackEntry.arguments?.getLong(REMINDER_ID_ARG) ?: -1L 
 
-            // Use the actual ReminderEditScreen
+            
             ReminderEditScreen(
                 reminderId = reminderId,
                 onNavigateBack = { navController.popBackStack() },
-                // Pass ViewModel if needed, usually handled by hiltViewModel()
+                
             )
         }
     }

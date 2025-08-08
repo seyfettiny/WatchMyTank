@@ -28,7 +28,7 @@ fun ParameterLogScreen(
     val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Handle one-off events
+    
     LaunchedEffect(key1 = true) {
         viewModel.events.collectLatest { event ->
             when (event) {
@@ -81,10 +81,10 @@ private fun ParameterLogContent(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState()), // Make content scrollable
+            .verticalScroll(rememberScrollState()), 
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Parameter Type Selector
+        
         ParameterTypeSelector(
             availableTypes = state.availableTypes,
             selectedType = state.selectedType,
@@ -92,7 +92,7 @@ private fun ParameterLogContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Value Input
+        
         OutlinedTextField(
             value = state.currentValue,
             onValueChange = { onIntent(ParameterLogContract.Intent.UpdateValue(it)) },
@@ -103,16 +103,16 @@ private fun ParameterLogContent(
             isError = state.error?.contains("value", ignoreCase = true) == true
         )
 
-        // Notes Input
+        
         OutlinedTextField(
             value = state.currentNotes,
             onValueChange = { onIntent(ParameterLogContract.Intent.UpdateNotes(it)) },
             label = { Text("Notes (Optional)") },
-            modifier = Modifier.fillMaxWidth().height(120.dp), // Allow multiple lines
+            modifier = Modifier.fillMaxWidth().height(120.dp), 
             maxLines = 5
         )
 
-        // Display Error Message (if not field-specific)
+        
         state.error?.let {
             if (it.contains("value", ignoreCase = true).not()) {
                 Text(
@@ -124,7 +124,7 @@ private fun ParameterLogContent(
             }
         }
 
-        // TODO: Add Timestamp Picker if needed
+        
     }
 }
 
@@ -145,11 +145,11 @@ private fun ParameterTypeSelector(
     ) {
         OutlinedTextField(
             value = selectedType.displayName,
-            onValueChange = {}, // Read-only
+            onValueChange = {}, 
             readOnly = true,
             label = { Text("Parameter Type") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier = Modifier.menuAnchor().fillMaxWidth() // Important for anchoring dropdown
+            modifier = Modifier.menuAnchor().fillMaxWidth() 
         )
         ExposedDropdownMenu(
             expanded = expanded,
@@ -173,7 +173,7 @@ private fun ParameterTypeSelector(
 private fun ParameterLogContentPreview() {
     WatchMyTankTheme {
         ParameterLogContent(
-            state = ParameterLogContract.State(), // Default state
+            state = ParameterLogContract.State(), 
             onIntent = {}
         )
     }

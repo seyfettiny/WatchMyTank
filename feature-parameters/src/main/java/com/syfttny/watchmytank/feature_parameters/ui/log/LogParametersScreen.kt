@@ -20,8 +20,8 @@ import com.syfttny.watchmytank.core.ui.theme.WatchMyTankTheme
 import com.syfttny.watchmytank.domain.model.ParameterRangeDefaults
 import com.syfttny.watchmytank.domain.model.ParameterType
 
-// TODO: Define State and Event for MVI
-// Placeholder state for UI development
+
+
 data class LogParametersState(
     val isLoading: Boolean = false,
     val parameterValues: Map<ParameterType, String> = ParameterType.values().associateWith { "" },
@@ -38,24 +38,24 @@ sealed interface LogParametersEvent {
 @Composable
 fun LogParametersScreen(
     viewModel: LogParametersViewModel = hiltViewModel()
-    // Add navigation callbacks if needed, e.g.:
-    // onLogSaved: () -> Unit,
-    // onNavigateBack: () -> Unit
+    
+    
+    
 ) {
     val state by viewModel.state.collectAsState()
     val onEvent = viewModel::onEvent
 
-    // TODO: Collect UI effects (like navigation or toasts) if implemented
-    // LaunchedEffect(key1 = true) {
-    //     viewModel.uiEffect.collect { effect ->
-    //         when (effect) {
-    //             is LogUiEffect.LogSavedSuccessfully -> onLogSaved()
-    //             is LogUiEffect.ShowError -> // Show snackbar
-    //         }
-    //     }
-    // }
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
-    // Get the list of parameters to display (can be customized later)
+    
     val parametersToShow = remember {
         listOf(
             ParameterType.TEMPERATURE,
@@ -93,8 +93,8 @@ fun LogParametersScreen(
                                 onValueChange = { newValue ->
                                     onEvent(LogParametersEvent.ParameterValueChanged(paramType, newValue))
                                 },
-                                // Disable input while loading
-                                // enabled = !state.isLoading (Need to add enabled param to Item)
+                                
+                                
                             )
                         }
                     }
@@ -125,7 +125,7 @@ fun LogParametersScreen(
                 }
             }
 
-            // Show loading indicator centered
+            
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
@@ -133,17 +133,17 @@ fun LogParametersScreen(
     }
 }
 
-// Preview remains useful for static layout checks
+
 @Preview(showBackground = true)
 @Composable
 private fun LogParametersScreenPreview() {
     WatchMyTankTheme {
-        // Preview won't have a real ViewModel, shows initial empty state
+        
         LogParametersScreen_PreviewLayout()
     }
 }
 
-// Separate composable for preview layout without ViewModel logic
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LogParametersScreen_PreviewLayout() {
@@ -175,7 +175,7 @@ private fun LogParametersScreen_PreviewLayout() {
                         ParameterLogItem(
                             parameterType = paramType,
                             rangeDefinition = rangeDef,
-                            valueString = "", // Empty for preview
+                            valueString = "", 
                             onValueChange = { }
                         )
                     }

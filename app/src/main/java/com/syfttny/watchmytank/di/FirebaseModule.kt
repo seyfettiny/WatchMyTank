@@ -21,12 +21,6 @@ object FirebaseModule {
     @Singleton
     fun provideFirestoreInstance(): FirebaseFirestore {
         return Firebase.firestore
-        // Optional: Configure settings like persistence, caching
-        // val settings = firestoreSettings {
-        //     isPersistenceEnabled = true
-        //     cacheSizeBytes = FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED
-        // }
-        // firestore.firestoreSettings = settings
     }
 
     @Provides
@@ -39,15 +33,6 @@ object FirebaseModule {
     @Singleton
     fun provideFirebaseRemoteConfigInstance(): FirebaseRemoteConfig {
         val remoteConfig = Firebase.remoteConfig
-        // Optional: Configure settings like minimum fetch interval
-        // val configSettings = remoteConfigSettings {
-        //     minimumFetchIntervalInSeconds = 3600 // e.g., 1 hour
-        // }
-        // remoteConfig.setConfigSettingsAsync(configSettings)
-        // Optional: Set default values (useful for first run or if fetch fails)
-        // remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
         return remoteConfig
     }
-
-    // Add providers for other Firebase services like Auth, Storage, etc. if needed
 } 

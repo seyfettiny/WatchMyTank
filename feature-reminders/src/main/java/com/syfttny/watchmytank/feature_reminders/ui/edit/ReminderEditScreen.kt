@@ -27,18 +27,18 @@ import com.syfttny.watchmytank.core.ui.theme.WatchMyTankTheme
 @Composable
 fun ReminderEditScreen(
     viewModel: ReminderEditViewModel = hiltViewModel(),
-    reminderId: Long?, // Passed from navigation
+    reminderId: Long?, 
     onNavigateBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Load reminder when the screen is first composed or reminderId changes
+    
     LaunchedEffect(key1 = reminderId) {
         viewModel.handleIntent(ReminderEditContract.Intent.LoadReminder(reminderId))
     }
 
-    // Handle one-off events
+    
     LaunchedEffect(key1 = true) {
         viewModel.events.collectLatest { event ->
             when (event) {
@@ -61,8 +61,8 @@ fun ReminderEditScreen(
                     }
                 },
                 actions = {
-                     // Show loading indicator in place of save button while saving
-                     if (state.isLoading && !state.isEditing) { // Only show progress on initial load/save
+                     
+                     if (state.isLoading && !state.isEditing) { 
                          CircularProgressIndicator(modifier = Modifier.size(24.dp))
                      } else {
                         IconButton(onClick = { viewModel.handleIntent(ReminderEditContract.Intent.SaveReminder) }) {
@@ -90,24 +90,24 @@ private fun ReminderEditContent(
     val context = LocalContext.current
     var showTimePicker by remember { mutableStateOf(false) }
 
-    // Use Calendar for default TimePickerDialog values
+    
     val calendar = Calendar.getInstance()
     val defaultHour = state.triggerHour ?: calendar.get(Calendar.HOUR_OF_DAY)
     val defaultMinute = state.triggerMinute ?: calendar.get(Calendar.MINUTE)
 
-    // TimePickerDialog
+    
     if (showTimePicker) {
         TimePickerDialog(
             context,
             { _: TimePicker, hour: Int, minute: Int ->
                 onIntent(ReminderEditContract.Intent.UpdateTime(hour, minute))
-                showTimePicker = false // Hide picker after selection
+                showTimePicker = false 
             },
-            defaultHour, // Initial hour
-            defaultMinute, // Initial minute
-            false // Use 24-hour format (or true based on locale/preference)
+            defaultHour, 
+            defaultMinute, 
+            false 
         ).apply {
-            setOnDismissListener { showTimePicker = false } // Hide if dismissed
+            setOnDismissListener { showTimePicker = false } 
             show()
         }
     }
@@ -116,10 +116,10 @@ private fun ReminderEditContent(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState()), // Make content scrollable
+            .verticalScroll(rememberScrollState()), 
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Loading indicator for initial load
+        
         if (state.isLoading && state.isEditing) {
             Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
@@ -131,7 +131,7 @@ private fun ReminderEditContent(
                  label = { Text("Reminder Name") },
                  modifier = Modifier.fillMaxWidth(),
                  singleLine = true,
-                 isError = state.error?.contains("Name", ignoreCase = true) == true // Basic error check
+                 isError = state.error?.contains("Name", ignoreCase = true) == true 
              )
 
              ReminderTypeSelector(
@@ -139,7 +139,7 @@ private fun ReminderEditContent(
                  onTypeSelected = { onIntent(ReminderEditContract.Intent.SelectType(it)) }
              )
 
-             // Show Time Picker only for DAILY or EVERY_N_DAYS (optional, could show for all)
+             
              if (state.type == ReminderType.DAILY || state.type == ReminderType.EVERY_N_DAYS) {
                  Row(
                      modifier = Modifier.fillMaxWidth(),
@@ -147,12 +147,12 @@ private fun ReminderEditContent(
                      horizontalArrangement = Arrangement.SpaceBetween
                  ) {
                     Text("Trigger Time", style = MaterialTheme.typography.bodyLarge)
-                    // Format the time string (HH:mm)
+                    
                     val timeString = remember(state.triggerHour, state.triggerMinute) {
                          if (state.triggerHour != null && state.triggerMinute != null) {
                              String.format("%02d:%02d", state.triggerHour, state.triggerMinute)
                          } else {
-                             "Select Time" // Placeholder if time not set
+                             "Select Time" 
                          }
                      }
                      Text(
@@ -166,7 +166,7 @@ private fun ReminderEditContent(
                  }
              }
 
-             // Show frequency input only if type is EVERY_N_DAYS
+             
              if (state.type == ReminderType.EVERY_N_DAYS) {
                  OutlinedTextField(
                      value = state.frequencyDays,
@@ -178,20 +178,20 @@ private fun ReminderEditContent(
                  )
              }
 
-            // Show CRON input only if type is CRON
+            
              if (state.type == ReminderType.CRON) {
                  OutlinedTextField(
                      value = state.cronExpression,
                      onValueChange = { onIntent(ReminderEditContract.Intent.UpdateCronExpression(it)) },
                      label = { Text("CRON Expression") },
                      modifier = Modifier.fillMaxWidth(),
-                      // Consider using a monospace font?
+                      
                      isError = state.error?.contains("CRON", ignoreCase = true) == true
                  )
-                 // TODO: Maybe add a link/button to a CRON expression builder/helper?
+                 
              }
 
-            // Add Switch for Enabled/Disabled state
+            
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -204,7 +204,7 @@ private fun ReminderEditContent(
                 )
             }
 
-            // Display general errors (not specific to a field)
+            
              state.error?.let {
                  if (!it.contains("Name", ignoreCase = true) &&
                      !it.contains("Frequency", ignoreCase = true) &&
@@ -229,7 +229,7 @@ private fun ReminderTypeSelector(
     onTypeSelected: (ReminderType) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val options = ReminderType.values() // Get all enum values
+    val options = ReminderType.values() 
     var expanded by remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
@@ -240,12 +240,12 @@ private fun ReminderTypeSelector(
             onExpandedChange = { expanded = !expanded }
         ) {
              OutlinedTextField(
-                 value = selectedType.name, // Display enum name
-                 onValueChange = {}, // Read-only
+                 value = selectedType.name, 
+                 onValueChange = {}, 
                  readOnly = true,
                  label = { Text("Select Type") },
                  trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                 modifier = Modifier.menuAnchor().fillMaxWidth() // Important for anchoring dropdown
+                 modifier = Modifier.menuAnchor().fillMaxWidth() 
              )
             ExposedDropdownMenu(
                 expanded = expanded,
@@ -253,7 +253,7 @@ private fun ReminderTypeSelector(
             ) {
                 options.forEach { type ->
                     DropdownMenuItem(
-                        text = { Text(type.name) }, // Display enum name
+                        text = { Text(type.name) }, 
                         onClick = {
                             onTypeSelected(type)
                             expanded = false
@@ -323,4 +323,3 @@ private fun ReminderEditContentWithErrorPreview() {
     }
 }
 
-// TODO: Add Previews for ReminderEditScreen/Content 

@@ -13,7 +13,7 @@ object ReminderListContract {
     data class State(
         val isLoading: Boolean = true,
         val reminders: List<Reminder> = emptyList(),
-        val error: String? = null // Holds potential error message
+        val error: String? = null 
     )
 
     /**
@@ -22,8 +22,8 @@ object ReminderListContract {
     sealed interface Intent {
         object LoadReminders : Intent
         data class DeleteReminder(val reminderId: Long) : Intent
-        data class EditReminder(val reminderId: Long) : Intent // Navigate to edit existing
-        object AddReminder : Intent // Navigate to create new
+        data class EditReminder(val reminderId: Long) : Intent 
+        object AddReminder : Intent 
     }
 
     /**
@@ -31,8 +31,8 @@ object ReminderListContract {
      * (e.g., navigation triggers, showing snackbars).
      */
     sealed interface Event {
-        data class NavigateToEditScreen(val reminderId: Long?) : Event // null for new reminder
+        data class NavigateToEditScreen(val reminderId: Long?) : Event 
         data class ShowErrorSnackbar(val message: String) : Event
-        data class ShowUndoDeleteSnackbar(val reminderId: Long) : Event // Optional: For undo functionality
+        data class ShowUndoDeleteSnackbar(val reminderId: Long) : Event 
     }
 } 

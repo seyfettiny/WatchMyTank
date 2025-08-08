@@ -61,7 +61,7 @@ fun ReminderListScreen(
                 }
                 is ReminderListContract.Event.ShowUndoDeleteSnackbar -> {
                     // TODO: Implement Undo logic if desired
-                    snackbarHostState.showSnackbar(message = "Reminder deleted") // Simple confirmation for now
+                    snackbarHostState.showSnackbar(message = "Reminder deleted") 
                 }
             }
         }
