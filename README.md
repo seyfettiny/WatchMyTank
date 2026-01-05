@@ -1,6 +1,6 @@
 
 # WatchMyTank - Aquarium Maintenance Assistant
-<!-->
+<!--
 <p align="center">
   <img src="httpspre_filled_prompts/WatchMyTank/dashboard.png" width="200" alt="WatchMyTank Dashboard">
   <img src="httpspre_filled_prompts/WatchMyTank/history.png" width="200" alt="Parameter History">
@@ -69,7 +69,7 @@ For many beginner and intermediate aquarium hobbyists, maintaining a stable and 
 *   **Test Strip Scanner:** Use the device's camera to automatically read and input values from a chemical test strip.
 
 ---
-<!-->
+<!--
 ## 🎥 App in Action (Demo)
 
 *(Here, you should embed GIFs or a short video. Create these using a screen recorder. They are far more effective than static images.)*
@@ -78,7 +78,7 @@ For many beginner and intermediate aquarium hobbyists, maintaining a stable and 
 | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | *[**INSERT GIF HERE** showing the main dashboard, tapping on reminders, and the list]* | *[**INSERT GIF HERE** showing logging a new parameter, viewing history, and the chart]* |
 
-<-->
+-->
 
 ## 🏛️ Technical Architecture
 
@@ -141,7 +141,7 @@ This structure adheres to **SOLID** principles and keeps the logic organized, ma
 -   **Navigation:** [Jetpack Navigation Compose](https://developer.android.com/jetpack/compose/navigation).
 
 ---
-<!-->
+<!--
 ## 🚀 Setup & Build Instructions
 
 1.  **Clone the Repository**
@@ -159,7 +159,7 @@ This structure adheres to **SOLID** principles and keeps the logic organized, ma
 4.  **Build and Run**
     -   Build and run the app on an emulator or a physical device.
 
-<-->
+-->
 
 ## 🌟 Standout Feature Concept: Test Strip Scanner
 
